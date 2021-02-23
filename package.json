@@ -4,10 +4,9 @@
   "description": "Internship OnBoard",
   "main": "index.js",
   "scripts": {
+    "start:dev": "nodemon 'src/server.ts' --exec 'ts-node' src/server.ts -e ts,graphql",
     "start": "node 'dist/server.js'",
     "build": "tsc -p . && ncp src/schema dist/schema",
-    "start:dev": "npm run build:dev",
-    "build:dev": "nodemon 'src/server.ts' --exec 'ts-node' src/server.ts -e ts,graphql",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

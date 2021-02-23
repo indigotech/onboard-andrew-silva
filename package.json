@@ -4,7 +4,7 @@
   "description": "Internship OnBoard",
   "main": "index.js",
   "scripts": {
-    "run": "node server.js",
+    "run": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,8 +18,8 @@
   },
   "homepage": "https://github.com/indigotech/onboard-andrew-silva#readme",
   "dependencies": {
-    "express": "^4.17.1",
-    "express-graphql": "^0.12.0",
-    "graphql": "^15.5.0"
+    "express": "4.17.1",
+    "express-graphql": "0.12.0",
+    "graphql": "15.5.0"
   }
 }

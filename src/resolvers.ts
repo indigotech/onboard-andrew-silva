@@ -4,7 +4,7 @@ import { IResolvers } from 'graphql-tools';
 const resolvers: IResolvers = {
   Query: {
     hello: (_: void, args: void): string => {
-        return `👋 Hello world! 👋`;
+      return `👋 Hello world! 👋`;
     },
   },
 };

@@ -15,19 +15,19 @@ Basically, the main technologies employed in this project are:
 - [PostgreSQL](https://www.postgresql.org/)
 - [TypeORM](https://github.com/typeorm/typeorm)
 
-First, it is necessary to install and configure Node.js (via [nvm](https://github.com/nvm-sh/nvm)) and Docker. Then, just clone this repo and, inside the project folder, install all packages by running:
+First, it is necessary to install and configure Node.js 15.8.0 (via [nvm](https://github.com/nvm-sh/nvm)) and Docker. Then, just clone this repo and, inside the project folder, install all packages by running:
 
 ```sh
 npm install
 ```
 
-Thereafter, it is necessary to initialize the databases, which cen be done by running:
+Thereafter, it is necessary to initialize the databases, which can be done by running:
 
 ```sh
 docker-compose up -d
 ```
 
-There are some useful tools that can be used for many purposes. For example, in order to keep the code clean, readable, and correct, installing [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extensions in your VSCode is a good choice. Furthermore, managing databases may be easier when using software such as [DBeaver](https://dbeaver.io/) or [TablePlus](https://tableplus.com/), just choose whatever you prefer.
+In addition, there are some useful tools that can be used for many purposes. For example, in order to keep the code clean, readable, and correct, installing [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) and [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extensions in your VSCode is a good choice. Furthermore, managing databases may be easier when using software such as [DBeaver](https://dbeaver.io/) or [TablePlus](https://tableplus.com/), just choose whatever you prefer.
 
 ## Running and debugging
 

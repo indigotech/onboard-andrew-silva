@@ -1,12 +1,10 @@
 import { IResolvers } from 'graphql-tools';
 
 // Define resolvers
-const resolvers: IResolvers = {
+export const Resolvers: IResolvers = {
   Query: {
-    hello: (_: void, args: void): string => {
-        return `👋 Hello world! 👋`;
+    hello: (): string => {
+      return `👋 Hello world! 👋`;
     },
   },
 };
-
-export { resolvers };

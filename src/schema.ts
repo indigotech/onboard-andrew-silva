@@ -5,9 +5,7 @@ import * as typeDefs from './schema/schema.graphql';
 import { Resolvers } from './resolvers';
 
 // Load resolvers
-const Schema: GraphQLSchema = makeExecutableSchema({
+export const Schema: GraphQLSchema = makeExecutableSchema({
   typeDefs,
   resolvers: Resolvers,
 });
-
-export { Schema };

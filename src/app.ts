@@ -1,25 +1,26 @@
+import 'reflect-metadata';
 import express from 'express';
 import { ApolloServer } from 'apollo-server-express';
 import depthLimit from 'graphql-depth-limit';
-import { createServer } from 'http';
 import compression from 'compression';
 import cors from 'cors';
 import { Schema } from './schema';
 
 // Create Apollo Server
-const app = express();
+const App = express();
 const server = new ApolloServer({
   schema: Schema,
   validationRules: [depthLimit(7)],
 });
 
 // Define some policies
-app.use('*', cors());
-app.use(compression());
+App.use('*', cors());
+App.use(compression());
 
 // Use Graphql Playground
-server.applyMiddleware({ app, path: '/graphql' });
+server.applyMiddleware({
+  app: App,
+  path: '/graphql',
+});
 
-// Run server
-const httpServer = createServer(app);
-httpServer.listen({ port: 3000 }, () => console.log(`\n🚀 GraphQL is running on http://localhost:3000/graphql\n`));
+export { App };

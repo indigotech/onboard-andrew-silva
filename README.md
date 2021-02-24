@@ -15,7 +15,7 @@ Basically, the main technologies employed in this project are:
 - [PostgreSQL](https://www.postgresql.org/)
 - [TypeORM](https://github.com/typeorm/typeorm)
 
-First, it is necessary to install and configure Node.js 15.8.0 (via [nvm](https://github.com/nvm-sh/nvm)) and Docker. Then, just clone this repo and, inside the project folder, install all packages by running:
+First, it is necessary to install and configure Node.js **15.8.0** (via [nvm](https://github.com/nvm-sh/nvm)) and Docker. Then, just clone this repo and, inside the project folder, install all packages by running:
 
 ```sh
 npm install

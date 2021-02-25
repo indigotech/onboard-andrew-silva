@@ -2,7 +2,7 @@ import { ObjectType, Field, ID } from 'type-graphql';
 import { UserEntity } from '../../../data/entity/user.entity';
 
 @ObjectType()
-export class UserType extends UserEntity {
+export class UserType {
   @Field(() => ID, { description: 'User id' })
   id!: string;
 

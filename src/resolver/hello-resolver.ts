@@ -1,10 +1,9 @@
-import { IResolvers } from 'graphql-tools';
+import { Resolver, Query } from "type-graphql";
 
-// Define resolvers
-export const HelloResolver: IResolvers = {
-  Query: {
-    hello: (): string => {
-      return `👋 Hello world! 👋`;
-    },
-  },
-};
+@Resolver()
+export class HelloResolver {
+  @Query(() => String)
+  hello() {
+    return `👋 Hello world! 👋`;
+  }
+}

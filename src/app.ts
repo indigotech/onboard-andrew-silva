@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import depthLimit from 'graphql-depth-limit';
 import compression from 'compression';
 import cors from 'cors';
-import { Schema } from './schema';
+import { Schema } from './api/schema';
 
 // Create Apollo Server
 const App = express();

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { LocalDB } from './connection/local-db';
+import { LocalDB } from './data/connection/local.db';
 import { createServer } from 'http';
 import { App } from './app';
 

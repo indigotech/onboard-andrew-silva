@@ -4,7 +4,7 @@ import { UserEntity } from '../../../data/entity/user.entity';
 @ObjectType()
 export class UserType extends UserEntity {
   @Field(() => ID, { description: 'User id' })
-  id!: number;
+  id!: string;
 
   @Field(() => String, { description: 'User name' })
   name!: string;

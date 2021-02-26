@@ -1,5 +1,5 @@
 import express from 'express';
-import { ApolloServer, ValidationError } from 'apollo-server-express';
+import { ApolloServer } from 'apollo-server-express';
 import depthLimit from 'graphql-depth-limit';
 import compression from 'compression';
 import cors from 'cors';

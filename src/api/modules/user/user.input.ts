@@ -12,7 +12,7 @@ export class UserInput {
 
   @Field()
   @Length(7)
-  @Matches('(?=.*[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ]+)(?=.*[0-9]+).*')
+  @Matches('(?=.*[a-zA-ZÀ-ÖÙ-öù-ÿĀ-ž]+)(?=.*[0-9]+).*')
   password!: string;
 
   @Field()

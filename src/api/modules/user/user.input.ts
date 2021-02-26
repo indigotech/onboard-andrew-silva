@@ -1,5 +1,5 @@
 import { InputType, Field } from 'type-graphql';
-import { Contains, Length, IsEmail, IsDate, Matches } from 'class-validator';
+import { Length, IsEmail, IsDate, Matches } from 'class-validator';
 
 @InputType()
 export class UserInput {
@@ -12,6 +12,7 @@ export class UserInput {
 
   @Field()
   @Length(7)
+  @Matches('(?=.*[a-zA-ZÀ-ÖÙ-öù-ÿĀ-žḀ-ỿ]+)(?=.*[0-9]+).*')
   password!: string;
 
   @Field()

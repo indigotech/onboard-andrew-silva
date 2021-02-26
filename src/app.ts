@@ -4,7 +4,6 @@ import depthLimit from 'graphql-depth-limit';
 import compression from 'compression';
 import cors from 'cors';
 import { Schema } from '@api/schema';
-import { GraphQLError } from 'graphql';
 
 // Create Apollo Server
 const App = express();

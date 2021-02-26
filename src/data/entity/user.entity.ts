@@ -25,4 +25,7 @@ export class UserEntity extends BaseEntity {
 
   @UpdateDateColumn()
   updateDate!: Date;
+
+  @Column()
+  salt!: string;
 }

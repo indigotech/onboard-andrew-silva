@@ -14,7 +14,7 @@ export class UserEntity extends BaseEntity {
   @Column()
   password!: string;
 
-  @Column({ type: 'date' })
+  @Column()
   birthDate!: Date;
 
   @Column({ default: true })

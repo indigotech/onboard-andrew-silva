@@ -15,8 +15,7 @@ export class UserResolver {
   async createUser(@Arg('data') data: UserInput) {
     const user = UserEntity.create(data);
 
-    user.salt = await bcrypt.genSalt();
-    user.password = await bcrypt.hash(user.password, user.salt);
+    user.password = await bcrypt.hash(user.password, 10);
 
     await user.save();
 

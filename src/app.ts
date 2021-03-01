@@ -10,6 +10,13 @@ const App = express();
 const server = new ApolloServer({
   schema: Schema,
   validationRules: [depthLimit(7)],
+  formatError: (err) => {
+    return {
+      code: err?.extensions?.code,
+      message: err.message,
+      detail: err?.extensions?.exception.detail,
+    };
+  },
 });
 
 // Define some policies

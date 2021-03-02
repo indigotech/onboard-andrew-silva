@@ -4,11 +4,11 @@ const url = `http://localhost:3000`;
 const request = supertest(url);
 
 describe('GraphQL Tests', () => {
-  it('Fetching users', (done) => {
+  it('Calling hello query', (done) => {
     request
       .post('/graphql')
       .send({
-        query: '{ users { id, name, email, birthDate } }',
+        query: '{ hello }',
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /json/)

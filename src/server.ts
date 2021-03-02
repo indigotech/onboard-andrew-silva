@@ -8,7 +8,7 @@ import { createServer, Server as HttpServer } from 'http';
 import dotenv from 'dotenv';
 
 // Config environments
-dotenv.config();
+dotenv.config({ path: (process.env.TEST == 'true' ? '.test.env' : '.env') });
 
 export const Server = async (): Promise<HttpServer> => {
   // Create Apollo Server

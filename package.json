@@ -7,7 +7,7 @@
     "dev": "nodemon 'src/index.ts' --exec 'ts-node -r tsconfig-paths/register' src/index.ts -e ts,graphql",
     "start": "node 'dist/index.js'",
     "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist",
-    "test": "mocha 'src/test/*.ts' -r ts-node/register -r tsconfig-paths/register --colors --exit"
+    "test": "TEST=true mocha 'src/test/*.ts' -r ts-node/register -r tsconfig-paths/register --colors --exit"
   },
   "repository": {
     "type": "git",

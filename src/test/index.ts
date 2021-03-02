@@ -1,4 +1,5 @@
 import supertest from 'supertest';
+import { expect } from 'chai'
 
 const url = `http://localhost:3000`;
 const request = supertest(url);
@@ -17,6 +18,7 @@ describe('GraphQL Tests', () => {
         if (err) {
           return done(err);
         }
+        expect(res.body.data).to.be.deep.eq({ hello: '👋 Hello world! 👋' });
         done();
       });
   });

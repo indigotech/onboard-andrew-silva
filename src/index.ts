@@ -1,10 +1,6 @@
 import 'reflect-metadata';
 import { Connection } from './data/config/connection';
 import { Server } from './server';
-import dotenv from 'dotenv';
-
-// Config environments
-dotenv.config();
 
 // Database connection
 Connection().then(() => {

@@ -5,6 +5,10 @@ import compression from 'compression';
 import cors from 'cors';
 import { Schema } from '@api/schema';
 import { createServer, Server as HttpServer } from 'http';
+import dotenv from 'dotenv';
+
+// Config environments
+dotenv.config();
 
 export const Server = async (): Promise<HttpServer> => {
   // Create Apollo Server

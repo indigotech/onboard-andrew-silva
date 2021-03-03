@@ -1,8 +1,8 @@
 import * as path from 'path';
 import { createConnection, Connection as TypeORMConnection } from 'typeorm';
 
-export const Connection = async (): Promise<TypeORMConnection> => {
-  return await createConnection({
+export const Connection = (): Promise<TypeORMConnection> => {
+  return createConnection({
     type: 'postgres',
     url: process.env.DATABASE_URL,
     entities: [path.join(__dirname, '..') + '/entity/*.{ts,js}'],

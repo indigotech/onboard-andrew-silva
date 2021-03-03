@@ -1,13 +1,20 @@
 import supertest from 'supertest';
 import { expect } from 'chai'
+import { Connection } from '@data/config/connection';
+import { Server } from 'server';
 
 const url = `http://localhost:3000`;
 const request = supertest(url);
 
+before(async () => {
+  await Connection()
+  await Server()
+})
+
 describe('GraphQL Tests', () => {
   it('Calling hello query', (done) => {
     request
-      .post('/graphql')
+      .post('/')
       .send({
         query: '{ hello }',
       })

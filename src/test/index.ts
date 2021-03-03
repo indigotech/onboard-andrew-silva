@@ -8,7 +8,6 @@ import { Connection } from '@data/config/connection';
 import { Server } from 'server';
 
 import { UserInput } from '@api/modules/user/user.input';
-import { UserType } from '@api/modules/user/user.type';
 import { UserEntity } from '@data/entity/user.entity';
 
 const seed: number = 0;
@@ -23,8 +22,17 @@ before(async () => {
   server = await Server();
 });
 
+describe('Database: entities', () => {
+  it('should have user entity', (done) => {
+    let entities = connection.entityMetadatas;
+    entities = entities.map((entity: any) => entity.name);
+    expect(entities).to.include('UserEntity');
+    done();
+  });
+});
+
 describe('GraphQL: Hello query', () => {
-  it('should return "👋 Hello world! 👋"', (done) => {
+  it('should return successfully', (done) => {
     request
       .post('/')
       .send({

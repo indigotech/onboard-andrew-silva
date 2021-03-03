@@ -22,15 +22,6 @@ before(async () => {
   server = await Server();
 });
 
-describe('Database: entities', () => {
-  it('should have user entity', (done) => {
-    let entities = connection.entityMetadatas;
-    entities = entities.map((entity: any) => entity.name);
-    expect(entities).to.include('UserEntity');
-    done();
-  });
-});
-
 describe('GraphQL: Hello query', () => {
   it('should return successfully', (done) => {
     request

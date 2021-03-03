@@ -46,7 +46,10 @@ describe('GraphQL: User - createUser', () => {
   const mutation = `
     mutation createUser($data: UserInput!) {
       createUser(data: $data) {
-        id name email birthDate
+        id
+        name
+        email
+        birthDate
       }
     }
   `;

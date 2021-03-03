@@ -1,6 +1,6 @@
 import supertest from 'supertest';
 import faker from 'faker';
-import gql from 'graphql-tag';
+import bcrypt from 'bcrypt';
 
 import { expect } from 'chai';
 
@@ -76,7 +76,7 @@ describe('GraphQL: User - createUser', () => {
         if (err) {
           return done(err);
         }
-        // Check response
+
         expect(res.body).to.not.own.property('errors');
         expect(res.body.data.createUser).to.have.property('id');
         expect(res.body.data.createUser).to.include({
@@ -84,11 +84,18 @@ describe('GraphQL: User - createUser', () => {
           email: input.email,
           birthDate: input.birthDate.toISOString(),
         });
-        // Check database
-        const user = await UserEntity.findOne(res.body.data.createUser.id);
-        expect(user).to.not.be.equal(undefined);
-        expect(user).to.not.include({ password: input.password });
-        done();
+
+        const user = (await UserEntity.findOne(res.body.data.createUser.id)) as UserEntity;
+        expect(user).to.not.be.undefined;
+        expect(await bcrypt.compare(input.password, user.password)).to.be.true;
+        expect(user).to.deep.include({
+          id: res.body.data.createUser.id,
+          name: input.name,
+          email: input.email,
+          birthDate: input.birthDate,
+        });
+
+        return done();
       });
   });
 });

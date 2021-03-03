@@ -93,3 +93,12 @@ describe('GraphQL: User - createUser', () => {
       });
   });
 });
+
+after(async () => {
+  const entities = connection.entityMetadatas;
+
+  for (const entity of entities) {
+    const repository = await connection.getRepository(entity.name);
+    await repository.clear();
+  }
+});

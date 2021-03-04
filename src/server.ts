@@ -7,6 +7,7 @@ import { Schema } from '@api/schema';
 import { createServer, Server as HttpServer } from 'http';
 import dotenv from 'dotenv';
 import { ArgumentValidationError } from 'type-graphql';
+import { BaseError } from '@api/error/base-error';
 
 // Config environments
 dotenv.config({ path: process.env.TEST == 'true' ? '.test.env' : '.env' });
@@ -19,11 +20,15 @@ export const Server = async (): Promise<HttpServer> => {
     validationRules: [depthLimit(7)],
     formatError: (err) => {
       const originalError = err.originalError;
-      let code: number = 400;
+      let code: number = 500;
       let message: string;
       let details;
 
-      if (originalError instanceof ArgumentValidationError) {
+      if (originalError instanceof BaseError) {
+        code = originalError.code;
+        message = originalError.message;
+        details = originalError.details;
+      } else if (originalError instanceof ArgumentValidationError) {
         const errors = originalError.validationErrors.map((validationError) => {
           const messages = [];
           for (let key in validationError.constraints) {
@@ -31,6 +36,7 @@ export const Server = async (): Promise<HttpServer> => {
           }
           return messages;
         });
+        code = 400;
         details = errors.toString().split(',');
         message = 'Argumentos inválidos';
       } else {

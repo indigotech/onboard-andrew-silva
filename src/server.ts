@@ -21,7 +21,7 @@ export const Server = async (): Promise<HttpServer> => {
       const originalError = err.originalError;
       let code: number = 400;
       let message: string;
-      let detail;
+      let details;
 
       if (originalError instanceof ArgumentValidationError) {
         const errors = originalError.validationErrors.map((validationError) => {
@@ -33,17 +33,17 @@ export const Server = async (): Promise<HttpServer> => {
             return messages;
           }
         });
+        details = errors.toString().split(',');
         message = 'Argumentos inválidos';
-        detail = errors;
       } else {
         message = err.message;
-        detail = err?.extensions?.exception.detail;
+        details = err?.extensions?.exception.detail;
       }
 
       return {
         code: code,
         message: message,
-        detail: detail,
+        details: details,
       };
     },
   });

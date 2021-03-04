@@ -10,10 +10,9 @@ export class LoginResolver {
   @Mutation(() => LoginType)
   async login(@Arg('data') data: LoginInput) {
     const user: UserEntity | undefined = await UserEntity.findOne({ email: data.email });
-    if (user) {
-      if (await bcrypt.compare(data.password, user.password)) {
-        return { user, token: 'the_token' };
-      }
+    if (user && (await bcrypt.compare(data.password, user.password))) {
+      return { user, token: 'the_token' };
     }
+    throw new Error('Email ou senha incorretos');
   }
 }

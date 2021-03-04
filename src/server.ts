@@ -25,13 +25,11 @@ export const Server = async (): Promise<HttpServer> => {
 
       if (originalError instanceof ArgumentValidationError) {
         const errors = originalError.validationErrors.map((validationError) => {
-          if (validationError.constraints) {
-            const messages = [];
-            for (let key in validationError.constraints) {
-              messages.push(validationError.constraints[key]);
-            }
-            return messages;
+          const messages = [];
+          for (let key in validationError.constraints) {
+            messages.push(validationError.constraints[key]);
           }
+          return messages;
         });
         details = errors.toString().split(',');
         message = 'Argumentos inválidos';

@@ -22,10 +22,10 @@ export class UserResolver {
 
       return user;
     } catch (error) {
-      if (error.message.includes('duplicate key value')) {
+      if (error.code == '23505') {
         throw new BaseError(400, 'Email já cadastrado');
       } else {
-        throw new BaseError(400, 'Erro ao realizar ação');
+        throw new BaseError(500, 'Erro ao realizar ação');
       }
     }
   }

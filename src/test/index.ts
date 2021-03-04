@@ -101,8 +101,42 @@ describe('GraphQL: User - createUser', () => {
         return done();
       });
   });
+
+  it('should trigger "duplicate email" error', (done) => {
+    faker.seed(seed);
+
+    const input: UserInput = {
+      name: faker.name.findName(),
+      email: faker.internet.email(),
+      password: 'a1' + faker.internet.password(),
+      birthDate: faker.date.past(),
+    };
+
+    request
+      .post('/')
+      .send({
+        query: mutation,
+        variables: {
+          data: input,
+        },
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /json/)
+      .expect(200)
+      .end(async (err, res) => {
+        if (err) {
+          return done(err);
+        }
+
+        expect(res.body.data).to.be.null;
+        expect(res.body).to.own.property('errors');
+        expect(res.body.errors).to.deep.include({ code: 400, message: 'Email já cadastrado' });
+
+        return done();
+      });
+  });
 });
 
 after(async () => {
-  await UserEntity.clear()
+  await UserEntity.clear();
 });

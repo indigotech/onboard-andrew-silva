@@ -17,7 +17,10 @@ export class LoginResolver {
     }
 
     if (await bcrypt.compare(data.password, user.password)) {
-      return { user, token: 'the_token' };
+      const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, String(process.env.JWT_SECRET), {
+        expiresIn: Number(process.env.JWT_EXPIRATION_TIME),
+      });
+      return { user, token };
     }
 
     throw new BaseError(401, 'Email ou senha incorretos');

@@ -17,7 +17,7 @@ export class LoginResolver {
     }
 
     if (await bcrypt.compare(data.password, user.password)) {
-      const token = Authenticator.getJWT({ id: user.id, name: user.name, email: user.email }, data.rememberMe);
+      const token = Authenticator.getJWT({ id: user.id }, data.rememberMe);
       return { user, token };
     }
 

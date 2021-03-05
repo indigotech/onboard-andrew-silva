@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
 import { BaseError } from '@api/error/base-error';
 import { AuthChecker } from 'type-graphql';
-import jwt from 'jsonwebtoken';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
 
 export interface Payload {
   id: string;
-  name: string;
-  email: string;
 }
 
 export interface ServerContext {
-  userId: string | undefined;
+  userId?: string;
+  error?: BaseError;
 }
 
 interface ServerRequest {
@@ -27,37 +26,35 @@ export class Authenticator {
     });
   };
 
-  static getPayload = (token: string): Payload | undefined => {
-    try {
-      return Object(jwt.verify(token, String(process.env.JWT_SECRET)));
-    } catch (err) {
-      return undefined;
-    }
-  };
-
   static context = ({ req, res }: ServerRequest) => {
     const bearerToken = req.headers?.authorization;
-
     if (!bearerToken) {
       return null;
     }
 
     const token = bearerToken.replace('Bearer ', '');
-    const payload = Authenticator.getPayload(token);
+    let payload: Payload | undefined;
+    const context: ServerContext = {};
 
-    if (payload) {
-      const context: ServerContext = {
-        userId: payload?.id,
-      };
-
-      return context;
+    try {
+      payload = jwt.verify(token, String(process.env.JWT_SECRET)) as Payload;
+      context.userId = payload.id;
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+        context.error = new BaseError(401, 'Usuário não autorizado', 'Token expirado');
+      } else {
+        context.error = new BaseError(401, 'Usuário não autorizado', 'Token inválido');
+      }
     }
+
+    return context;
   };
 
   static authChecker: AuthChecker<ServerContext> = ({ context }, roles) => {
     if (context.userId) {
       return true;
+    } else {
+      throw context.error;
     }
-    throw new BaseError(401, 'Usuário não autorizado', 'JWT inválido');
   };
 }

@@ -14,7 +14,7 @@ export class LoginInput {
   })
   password!: string;
 
-  @Field()
+  @Field(() => Boolean, { defaultValue: false })
   @IsBoolean({ message: 'Lembrar login precisa ser verdadeiro ou falso' })
   rememberMe: boolean = false;
 }

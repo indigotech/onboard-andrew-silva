@@ -1,9 +1,21 @@
+import { Request, Response } from 'express';
+import { BaseError } from '@api/error/base-error';
+import { AuthChecker } from 'type-graphql';
 import jwt from 'jsonwebtoken';
 
-export class Payload {
-  id!: string;
-  name!: string;
-  email!: string;
+export interface Payload {
+  id: string;
+  name: string;
+  email: string;
+}
+
+export interface ServerContext {
+  userId: string | undefined;
+}
+
+interface ServerRequest {
+  req: Request;
+  res: Response;
 }
 
 export class Authenticator {
@@ -15,11 +27,30 @@ export class Authenticator {
     });
   };
 
-  static getPayload = (token: string): Payload => {
-    return Object(jwt.verify(token, String(process.env.JWT_SECRET)));
+  static getPayload = (token: string): Payload | undefined => {
+    try {
+      return Object(jwt.verify(token, String(process.env.JWT_SECRET)));
+    } catch (err) {
+      return undefined;
+    }
   };
 
-  static authenticate = (req: any) => {
-    console.log(req);
+  static context = ({ req, res }: ServerRequest) => {
+    const bearerToken = req.headers?.authorization;
+
+    if (!bearerToken) {
+      return null;
+    }
+
+    const token = bearerToken.replace('Bearer ', '');
+    const payload = Authenticator.getPayload(token);
+
+    if (payload) {
+      const context: ServerContext = {
+        userId: payload?.id,
+      };
+
+      return context;
+    }
   };
 }

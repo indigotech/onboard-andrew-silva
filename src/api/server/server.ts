@@ -6,6 +6,7 @@ import cors from 'cors';
 import { Schema } from '@api/schema/schema';
 import { createServer, Server as HttpServer } from 'http';
 import { ErrorFormatter } from './error-formatter';
+import { Authenticator } from './authenticator';
 import dotenv from 'dotenv';
 
 // Config environments
@@ -18,6 +19,7 @@ export const Server = async (): Promise<HttpServer> => {
     schema: Schema,
     validationRules: [depthLimit(7)],
     formatError: ErrorFormatter,
+    context: Authenticator.context,
   });
 
   // Define some policies

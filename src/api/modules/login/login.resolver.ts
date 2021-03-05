@@ -5,6 +5,7 @@ import { LoginType } from './login.type';
 import { UserEntity } from '@data/entity/user.entity';
 
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 @Resolver()
 export class LoginResolver {

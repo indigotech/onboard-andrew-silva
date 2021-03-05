@@ -17,9 +17,15 @@ export class LoginResolver {
 =======
     if (user) {
       if (await bcrypt.compare(data.password, user.password)) {
+        let expirationTime = Number(process.env.JWT_EXPIRATION_TIME);
+        if (data.rememberMe) {
+          expirationTime = Number(process.env.JWT_EXTENDED_EXPIRATION_TIME);
+        }
+
         const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, String(process.env.JWT_SECRET), {
-          expiresIn: Number(process.env.JWT_EXPIRATION_TIME),
+          expiresIn: expirationTime,
         });
+
         return { user, token };
       } else {
         throw new BaseError(401, 'Email ou senha incorretos');

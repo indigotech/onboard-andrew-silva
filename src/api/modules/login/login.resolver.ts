@@ -17,7 +17,7 @@ export class LoginResolver {
     }
 
     if (await bcrypt.compare(data.password, user.password)) {
-      const token = jwt.sign({ id: user.id, name: user.name, email: user.email }, String(process.env.JWT_SECRET), {
+      const token = jwt.sign({ id: user.id }, String(process.env.JWT_SECRET), {
         expiresIn: Number(process.env.JWT_EXPIRATION_TIME),
       });
       return { user, token };

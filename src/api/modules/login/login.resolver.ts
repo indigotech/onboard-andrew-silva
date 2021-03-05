@@ -11,14 +11,14 @@ export class LoginResolver {
   @Mutation(() => LoginType)
   async login(@Arg('data') data: LoginInput) {
     const user: UserEntity | undefined = await UserEntity.findOne({ email: data.email });
-    if (user) {
-      if (await bcrypt.compare(data.password, user.password)) {
-        return { user, token: 'the_token' };
-      } else {
-        throw new BaseError(401, 'Email ou senha incorretos');
-      }
-    } else {
+    if (!user) {
       throw new BaseError(404, 'Email não cadastrado');
     }
+
+    if (await bcrypt.compare(data.password, user.password)) {
+      return { user, token: 'the_token' };
+    }
+
+    throw new BaseError(401, 'Email ou senha incorretos');
   }
 }

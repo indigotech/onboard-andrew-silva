@@ -5,6 +5,7 @@ import { LoginType } from './login.type';
 import { UserEntity } from '@data/entity/user.entity';
 
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 @Resolver()
 export class LoginResolver {
@@ -16,7 +17,10 @@ export class LoginResolver {
     }
 
     if (await bcrypt.compare(data.password, user.password)) {
-      return { user, token: 'the_token' };
+      const token = jwt.sign({ id: user.id }, String(process.env.JWT_SECRET), {
+        expiresIn: Number(process.env.JWT_EXPIRATION_TIME),
+      });
+      return { user, token };
     }
 
     throw new BaseError(401, 'Email ou senha incorretos');

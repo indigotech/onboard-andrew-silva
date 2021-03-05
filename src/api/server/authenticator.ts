@@ -53,4 +53,11 @@ export class Authenticator {
       return context;
     }
   };
+
+  static authChecker: AuthChecker<ServerContext> = ({ context }, roles) => {
+    if (context.userId) {
+      return true;
+    }
+    throw new BaseError(401, 'Usuário não autorizado', 'JWT inválido');
+  };
 }

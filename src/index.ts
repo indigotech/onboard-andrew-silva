@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import { Connection } from './data/config/connection';
-import { Server } from './server';
+import { Server } from './api/server/server';
 
 // Database connection
 Connection().then(() => {

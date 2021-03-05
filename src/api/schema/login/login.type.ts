@@ -1,5 +1,5 @@
 import { ObjectType, Field } from 'type-graphql';
-import { UserType } from '@api/modules/user/user.type';
+import { UserType } from '@api/schema/user/user.type';
 
 @ObjectType()
 export class LoginType {

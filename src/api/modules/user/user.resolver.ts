@@ -2,6 +2,7 @@ import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 import { UserEntity } from '@data/entity/user.entity';
 import { UserInput } from './user.input';
 import { UserType } from './user.type';
+import { BaseError } from '@api/error/base-error';
 import bcrypt from 'bcrypt';
 
 @Resolver()
@@ -13,12 +14,19 @@ export class UserResolver {
 
   @Mutation(() => UserType)
   async createUser(@Arg('data') data: UserInput) {
-    const user = UserEntity.create(data);
+    try {
+      const user = UserEntity.create(data);
 
-    user.password = await bcrypt.hash(user.password, 10);
+      user.password = await bcrypt.hash(user.password, 10);
+      await user.save();
 
-    await user.save();
-
-    return user;
+      return user;
+    } catch (error) {
+      if (error.code == '23505') {
+        throw new BaseError(400, 'Email já cadastrado');
+      } else {
+        throw new BaseError(500, 'Erro ao realizar ação');
+      }
+    }
   }
 }

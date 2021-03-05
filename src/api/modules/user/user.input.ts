@@ -7,15 +7,17 @@ export class UserInput {
   name!: string;
 
   @Field()
-  @IsEmail()
+  @IsEmail(undefined, { message: 'O email precisa ser um endereço de e-mail válido' })
   email!: string;
 
   @Field()
-  @Length(7)
-  @Matches('(?=.*[a-zA-ZÀ-ÖÙ-öù-ÿĀ-ž]+)(?=.*[0-9]+).*')
+  @Length(7, undefined, { message: 'A senha precisa ter pelo menos 7 caracteres' })
+  @Matches('(?=.*[a-zA-ZÀ-ÖÙ-öù-ÿĀ-ž]+)(?=.*[0-9]+).*', undefined, {
+    message: 'A senha precisa ter pelo uma letra e um número',
+  })
   password!: string;
 
   @Field()
-  @IsDate()
+  @IsDate({ message: 'A data de nascimento precisa ser uma data válida' })
   birthDate!: Date;
 }

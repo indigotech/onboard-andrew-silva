@@ -4,10 +4,10 @@ import { Server } from './server';
 
 // Database connection
 Connection().then(() => {
-  console.log(`🟢 Database connected`);
+  console.log(`✓ Database connected`);
   Server().then(() => {
     console.log(
-      `🟢 GraphQL is running on http://localhost:${process.env.PORT}${process.env.GRAPHQL_PLAYGROUND_ENDPOINT}`,
+      `✓ GraphQL is running on http://localhost:${process.env.PORT}${process.env.GRAPHQL_PLAYGROUND_ENDPOINT}`,
     );
   });
 });

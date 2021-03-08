@@ -20,9 +20,7 @@ interface ServerRequest {
 export class Authenticator {
   static getJWT = (payload: Payload, extendedExpiration: boolean = false): string => {
     return jwt.sign(payload, String(process.env.JWT_SECRET), {
-      expiresIn: extendedExpiration
-        ? Number(process.env.JWT_EXTENDED_EXPIRATION_TIME)
-        : Number(process.env.JWT_EXPIRATION_TIME),
+      expiresIn: extendedExpiration ? process.env.JWT_EXTENDED_EXPIRATION_TIME : process.env.JWT_EXPIRATION_TIME,
     });
   };
 

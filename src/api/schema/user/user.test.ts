@@ -106,7 +106,8 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const res = await Request(createUserMutation, { data: input });
+    const token = await getToken();
+    const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
     expect(res.body).to.own.property('errors');
@@ -127,7 +128,8 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const res = await Request(createUserMutation, { data: input });
+    const token = await getToken();
+    const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
     expect(res.body).to.own.property('errors');

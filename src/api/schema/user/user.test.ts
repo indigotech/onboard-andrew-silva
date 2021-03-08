@@ -29,25 +29,28 @@ mutation login($data: LoginInput!) {
   }
 }`;
 
+const getToken = async (): Promise<string> => {
+  const authUser = UserEntity.create({
+    name: 'Luke Skywalker',
+    email: 'skylwalker.top@gmail.com',
+    password: 'a1ÊÇ7ma2',
+    birthDate: new Date(),
+  });
+  await authUser.save();
+
+  const loginInput: LoginInput = {
+    email: authUser.email,
+    password: 'a1ÊÇ7ma2',
+    rememberMe: false,
+  };
+
+  const loginRes = await Request(loginMutation, { data: loginInput });
+
+  return loginRes.body.data.login.token;
+};
+
 describe('GraphQL: User - createUser', () => {
   it('should create user successfully', async () => {
-    const authUser = UserEntity.create({
-      name: 'Luke Skywalker',
-      email: 'skylwalker.top@gmail.com',
-      password: 'a1ÊÇ7ma2',
-      birthDate: new Date(),
-    });
-    await authUser.save();
-
-    const loginInput: LoginInput = {
-      email: authUser.email,
-      password: 'a1ÊÇ7ma2',
-      rememberMe: false,
-    };
-
-    const loginRes = await Request(loginMutation, { data: loginInput });
-    console.log(loginRes.body);
-
     const userInput: UserInput = {
       name: 'Padmé Amidala',
       email: 'padmeia@yahoo.com',
@@ -55,8 +58,8 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const res = await Request(createUserMutation, { data: userInput }, loginRes.body.data.login.token);
-    console.log(res.body);
+    const token = await getToken();
+    const res = await Request(createUserMutation, { data: userInput }, token);
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.createUser).to.have.property('id');
@@ -79,13 +82,14 @@ describe('GraphQL: User - createUser', () => {
 
   it('should trigger duplicate email error', async () => {
     const input: UserInput = {
-      name: 'Anakin Skywalker',
+      name: 'Luke Skywalker',
       email: 'skylwalker.top@gmail.com',
-      password: 'é8Ç7qwa2',
+      password: 'a1ÊÇ7ma2',
       birthDate: new Date(),
     };
 
-    const res = await Request(createUserMutation, { data: input });
+    const token = await getToken();
+    const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
     expect(res.body).to.own.property('errors');

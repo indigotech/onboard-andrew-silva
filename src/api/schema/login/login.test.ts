@@ -56,9 +56,7 @@ describe('GraphQL: Login', () => {
 
     expect(res.body.data).to.be.null;
     expect(res.body).to.own.property('errors');
-
-    const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
-    expect(errorMessages).to.include('Email não cadastrado');
+    expect(res.body.errors).to.deep.include({ code: 404, message: 'Email não cadastrado' });
   });
 
   it('should trigger invalid password error', async () => {
@@ -80,8 +78,6 @@ describe('GraphQL: Login', () => {
 
     expect(res.body.data).to.be.null;
     expect(res.body).to.own.property('errors');
-
-    const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
-    expect(errorMessages).to.include('Email ou senha incorretos');
+    expect(res.body.errors).to.deep.include({ code: 401, message: 'Email ou senha incorretos' });
   });
 });

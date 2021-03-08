@@ -51,7 +51,7 @@ const getToken = async (): Promise<string> => {
 
 describe('GraphQL: User - createUser', () => {
   it('should create user successfully', async () => {
-    const userInput: UserInput = {
+    const input: UserInput = {
       name: 'Padmé Amidala',
       email: 'padmeia@yahoo.com',
       password: 'padead123',
@@ -59,24 +59,43 @@ describe('GraphQL: User - createUser', () => {
     };
 
     const token = await getToken();
-    const res = await Request(createUserMutation, { data: userInput }, token);
+    const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.createUser).to.have.property('id');
     expect(res.body.data.createUser).to.include({
-      name: userInput.name,
-      email: userInput.email,
-      birthDate: userInput.birthDate.toISOString(),
+      name: input.name,
+      email: input.email,
+      birthDate: input.birthDate.toISOString(),
     });
 
     const user = (await UserEntity.findOne(res.body.data.createUser.id)) as UserEntity;
     expect(user).to.not.be.undefined;
-    expect(await bcrypt.compare(userInput.password, user.password)).to.be.true;
+    expect(await bcrypt.compare(input.password, user.password)).to.be.true;
     expect(user).to.deep.include({
       id: res.body.data.createUser.id,
-      name: userInput.name,
-      email: userInput.email,
-      birthDate: userInput.birthDate,
+      name: input.name,
+      email: input.email,
+      birthDate: input.birthDate,
+    });
+  });
+
+  it('should trigger token not sent error', async () => {
+    const input: UserInput = {
+      name: 'Padmé Amidala',
+      email: 'wrong email',
+      password: 'padead123',
+      birthDate: new Date(),
+    };
+
+    const res = await Request(createUserMutation, { data: input });
+
+    expect(res.body.data).to.be.null;
+    expect(res.body).to.own.property('errors');
+    expect(res.body.errors).to.deep.include({
+      code: 401,
+      message: 'Usuário não autorizado',
+      details: 'Token não enviado',
     });
   });
 
@@ -93,16 +112,14 @@ describe('GraphQL: User - createUser', () => {
 
     expect(res.body.data).to.be.null;
     expect(res.body).to.own.property('errors');
-
-    const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
-    expect(errorMessages).to.include('Email já cadastrado');
+    expect(res.body.errors).to.deep.include({ code: 400, message: 'Email já cadastrado' });
   });
 
   it('should trigger email validation error', async () => {
     const input: UserInput = {
-      name: 'Anakin Skywalker',
+      name: 'Padmé Amidala',
       email: 'wrong email',
-      password: 'é8Ç7qwa2',
+      password: 'padead123',
       birthDate: new Date(),
     };
 
@@ -122,9 +139,9 @@ describe('GraphQL: User - createUser', () => {
 
   it('should trigger password validation error', async () => {
     const input: UserInput = {
-      name: 'Anakin Skywalker',
-      email: 'vader.darth@yahoo.com',
-      password: 'aaaaaa',
+      name: 'Padmé Amidala',
+      email: 'padmeia@yahoo.com',
+      password: 'aaa',
       birthDate: new Date(),
     };
 

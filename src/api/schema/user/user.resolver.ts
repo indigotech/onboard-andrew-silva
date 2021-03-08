@@ -1,8 +1,9 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, Authorized } from 'type-graphql';
 import { UserEntity } from '@data/entity/user.entity';
 import { UserInput } from './user.input';
 import { UserType } from './user.type';
 import { BaseError } from '@api/error/base-error';
+
 import bcrypt from 'bcrypt';
 
 @Resolver()
@@ -13,6 +14,7 @@ export class UserResolver {
   }
 
   @Mutation(() => UserType)
+  @Authorized()
   async createUser(@Arg('data') data: UserInput) {
     try {
       const user = UserEntity.create(data);

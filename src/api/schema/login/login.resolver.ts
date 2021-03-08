@@ -3,9 +3,9 @@ import { BaseError } from '@api/error/base-error';
 import { LoginInput } from './login.input';
 import { LoginType } from './login.type';
 import { UserEntity } from '@data/entity/user.entity';
+import { Authenticator } from '@api/server/authenticator';
 
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 @Resolver()
 export class LoginResolver {
@@ -17,11 +17,7 @@ export class LoginResolver {
     }
 
     if (await bcrypt.compare(data.password, user.password)) {
-      const token = jwt.sign({ id: user.id }, String(process.env.JWT_SECRET), {
-        expiresIn: data.rememberMe
-          ? Number(process.env.JWT_EXTENDED_EXPIRATION_TIME)
-          : Number(process.env.JWT_EXPIRATION_TIME),
-      });
+      const token = Authenticator.getJWT({ id: user.id }, data.rememberMe);
       return { user, token };
     }
 

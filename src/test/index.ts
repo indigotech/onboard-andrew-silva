@@ -4,9 +4,9 @@ import bcrypt from 'bcrypt';
 import { expect } from 'chai';
 
 import { Connection } from '@data/config/connection';
-import { Server } from 'server';
+import { Server } from '@api/server/server';
 
-import { UserInput } from '@api/modules/user/user.input';
+import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
 
 const url: string = `http://localhost:3000`;

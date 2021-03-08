@@ -122,6 +122,29 @@ describe('GraphQL: User - createUser', () => {
     });
   });
 
+  it('should trigger invalid token error', async () => {
+    const input: UserInput = {
+      name: 'Padmé Amidala',
+      email: 'wrong email',
+      password: 'padead123',
+      birthDate: new Date(),
+    };
+
+    const res = await Request(
+      createUserMutation,
+      { data: input },
+      'eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',
+    );
+
+    expect(res.body.data).to.be.null;
+    expect(res.body).to.own.property('errors');
+    expect(res.body.errors).to.deep.include({
+      code: 401,
+      message: 'Usuário não autorizado',
+      details: 'Token inválido',
+    });
+  });
+
   it('should trigger duplicate email error', async () => {
     const input: UserInput = {
       name: 'Luke Skywalker',

@@ -5,7 +5,6 @@ import { expect } from 'chai';
 import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
-import { UserType } from './user.type';
 
 const userQuery = `
 query user ($id: String!) {

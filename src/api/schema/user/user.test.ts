@@ -66,7 +66,6 @@ describe('GraphQL: User - query user', () => {
     const res = await Request(userQuery, { id: '00000000-0000-0000-0000-000000000000' }, token);
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({
       code: 404,
       message: 'Usuário inexistente',
@@ -86,10 +85,74 @@ describe('GraphQL: User - query user', () => {
     const res = await Request(userQuery, { id: 'wrong id' }, token);
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({
       code: 400,
       message: 'Identificador de usuário inválido',
+    });
+  });
+
+  it('should trigger token not sent error', async () => {
+    const user = UserEntity.create({
+      name: 'Padmé Amidala',
+      email: 'padmeia@yahoo.com',
+      password: 'padead123',
+      birthDate: new Date(),
+    });
+    await user.save();
+
+    const res = await Request(userQuery, { id: user.id });
+
+    expect(res.body.data).to.be.null;
+    expect(res.body.errors).to.deep.include({
+      code: 401,
+      message: 'Usuário não autorizado',
+      details: 'Token não enviado',
+    });
+  });
+
+  it('should trigger expired token error', async () => {
+    const user = UserEntity.create({
+      name: 'Padmé Amidala',
+      email: 'padmeia@yahoo.com',
+      password: 'padead123',
+      birthDate: new Date(),
+    });
+    await user.save();
+
+    const res = await Request(
+      userQuery,
+      { id: user.id },
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',
+    );
+
+    expect(res.body.data).to.be.null;
+    expect(res.body.errors).to.deep.include({
+      code: 401,
+      message: 'Usuário não autorizado',
+      details: 'Token expirado',
+    });
+  });
+
+  it('should trigger invalid token error', async () => {
+    const user = UserEntity.create({
+      name: 'Padmé Amidala',
+      email: 'padmeia@yahoo.com',
+      password: 'padead123',
+      birthDate: new Date(),
+    });
+    await user.save();
+
+    const res = await Request(
+      userQuery,
+      { id: user.id },
+      'eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',
+    );
+
+    expect(res.body.data).to.be.null;
+    expect(res.body.errors).to.deep.include({
+      code: 401,
+      message: 'Usuário não autorizado',
+      details: 'Token inválido',
     });
   });
 });
@@ -136,7 +199,6 @@ describe('GraphQL: User - mutation createUser', () => {
     const res = await Request(createUserMutation, { data: input });
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({
       code: 401,
       message: 'Usuário não autorizado',
@@ -159,7 +221,6 @@ describe('GraphQL: User - mutation createUser', () => {
     );
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({
       code: 401,
       message: 'Usuário não autorizado',
@@ -182,7 +243,6 @@ describe('GraphQL: User - mutation createUser', () => {
     );
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({
       code: 401,
       message: 'Usuário não autorizado',
@@ -202,7 +262,6 @@ describe('GraphQL: User - mutation createUser', () => {
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({ code: 400, message: 'Email já cadastrado' });
   });
 
@@ -218,7 +277,6 @@ describe('GraphQL: User - mutation createUser', () => {
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
 
     const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
     expect(errorMessages).to.include('Argumentos inválidos');
@@ -240,7 +298,6 @@ describe('GraphQL: User - mutation createUser', () => {
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
 
     const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
     expect(errorMessages).to.include('Argumentos inválidos');

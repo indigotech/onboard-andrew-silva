@@ -6,7 +6,19 @@ import { BaseError } from '@api/error/base-error';
 
 @Resolver()
 export class UserResolver {
+  @Query(() => UserType)
+  @Authorized()
+  async user(@Arg('id') id: string) {
+    try {
+      const user = UserEntity.findOne(id);
+      return user;
+    } catch (error) {
+      throw new BaseError(404, 'Usuário não encontrado');
+    }
+  }
+
   @Query(() => [UserType])
+  @Authorized()
   async users() {
     return UserEntity.find();
   }

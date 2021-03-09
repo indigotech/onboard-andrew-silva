@@ -5,6 +5,8 @@ import jwt, { TokenExpiredError } from 'jsonwebtoken';
 
 export interface Payload {
   id: string;
+  iat?: number;
+  exp?: number;
 }
 
 export interface ServerContext {

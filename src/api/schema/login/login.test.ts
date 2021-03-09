@@ -92,7 +92,6 @@ describe('GraphQL: Login - mutation login', () => {
     const res = await Request(loginMutation, { data: input });
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({ code: 404, message: 'Email não cadastrado' });
   });
 
@@ -108,7 +107,6 @@ describe('GraphQL: Login - mutation login', () => {
     const res = await Request(loginMutation, { data: input });
 
     expect(res.body.data).to.be.null;
-    expect(res.body).to.own.property('errors');
     expect(res.body.errors).to.deep.include({ code: 401, message: 'Email ou senha incorretos' });
   });
 });

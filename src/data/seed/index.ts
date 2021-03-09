@@ -1,12 +1,16 @@
+import 'reflect-metadata';
 import { Server } from '@api/server/server';
 import { Connection } from '@data/config/connection';
 import { UserSeed } from './user.seed';
 
 const DatabaseSeed = async () => {
-  await Connection();
-  await Server();
+  const connection = await Connection();
+  const server = await Server();
 
-  UserSeed();
+  await UserSeed();
+
+  connection.close();
+  server.close();
 };
 
 DatabaseSeed();

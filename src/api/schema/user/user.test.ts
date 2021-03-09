@@ -4,7 +4,8 @@ import { expect } from 'chai';
 
 import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
-import { LoginInput } from '@api/schema/login/login.input';
+import { Authenticator } from '@api/server/authenticator';
+import { UserType } from './user.type';
 
 const createUserMutation = `
 mutation createUser($data: UserInput!) {
@@ -16,37 +17,16 @@ mutation createUser($data: UserInput!) {
   }
 }`;
 
-const loginMutation = `
-mutation login($data: LoginInput!) {
-  login(data: $data) {
-    user {
-      id
-      name
-      email
-      birthDate
-    }
-    token
-  }
-}`;
-
 const getToken = async (): Promise<string> => {
-  const authUser = UserEntity.create({
+  const user = UserEntity.create({
     name: 'Luke Skywalker',
     email: 'skylwalker.top@gmail.com',
     password: 'a1ÊÇ7ma2',
     birthDate: new Date(),
   });
-  await authUser.save();
+  await user.save();
 
-  const loginInput: LoginInput = {
-    email: authUser.email,
-    password: 'a1ÊÇ7ma2',
-    rememberMe: false,
-  };
-
-  const loginRes = await Request(loginMutation, { data: loginInput });
-
-  return loginRes.body.data.login.token;
+  return Authenticator.getJWT({ id: user.id });
 };
 
 describe('GraphQL: User - createUser', () => {
@@ -72,7 +52,7 @@ describe('GraphQL: User - createUser', () => {
     const user = (await UserEntity.findOne(res.body.data.createUser.id)) as UserEntity;
     expect(user).to.not.be.undefined;
     expect(await bcrypt.compare(input.password, user.password)).to.be.true;
-    expect(user).to.deep.include({
+    expect(user as UserType).to.deep.include({
       id: res.body.data.createUser.id,
       name: input.name,
       email: input.email,

@@ -49,10 +49,10 @@ describe('GraphQL: User - createUser', () => {
       birthDate: input.birthDate.toISOString(),
     });
 
-    const user = (await UserEntity.findOne(res.body.data.createUser.id)) as UserEntity;
+    const user = await UserEntity.findOneOrFail(res.body.data.createUser.id);
     expect(user).to.not.be.undefined;
     expect(await bcrypt.compare(input.password, user.password)).to.be.true;
-    expect(user as UserType).to.deep.include({
+    expect(user).to.deep.include({
       id: res.body.data.createUser.id,
       name: input.name,
       email: input.email,

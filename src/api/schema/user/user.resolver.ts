@@ -10,7 +10,7 @@ export class UserResolver {
   @Authorized()
   async user(@Arg('id') id: string) {
     try {
-      const user = UserEntity.findOne(id);
+      const user = UserEntity.findOneOrFail(id);
       return user;
     } catch (error) {
       throw new BaseError(404, 'Usuário não encontrado');

@@ -3,6 +3,7 @@ import { expect } from 'chai';
 
 import { UserEntity } from '@data/entity/user.entity';
 import { LoginInput } from '@api/schema/login/login.input';
+import { Authenticator } from '@api/server/authenticator';
 
 const loginMutation = `
 mutation login($data: LoginInput!) {
@@ -37,6 +38,12 @@ describe('GraphQL: Login', () => {
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.login.token).to.be.an('string');
+
+    const payload = Authenticator.getPayload(res.body.data.login.token);
+    expect(payload).to.include({
+      id: user.id,
+    });
+
     expect(res.body.data.login.user).to.include({
       id: user.id,
       name: user.name,

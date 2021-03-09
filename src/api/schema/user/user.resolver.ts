@@ -9,12 +9,19 @@ export class UserResolver {
   @Query(() => UserType)
   @Authorized()
   async user(@Arg('id') id: string) {
+    let user: UserEntity | undefined;
+
     try {
-      const user = UserEntity.findOneOrFail(id);
-      return user;
-    } catch (error) {
-      throw new BaseError(404, 'Usuário não encontrado');
+      user = await UserEntity.findOne(id);
+    } catch (err) {
+      throw new BaseError(400, 'Identificador de usuário inválido');
     }
+
+    if (user) {
+      return user;
+    }
+
+    throw new BaseError(404, 'Usuário inexistente');
   }
 
   @Query(() => [UserType])

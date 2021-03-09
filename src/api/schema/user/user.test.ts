@@ -47,7 +47,7 @@ describe('GraphQL: User - query user', () => {
       password: 'padead123',
       birthDate: new Date(),
     });
-    user.save();
+    await user.save();
 
     const token = await getTestToken();
     const res = await Request(userQuery, { id: user.id }, token);
@@ -58,6 +58,18 @@ describe('GraphQL: User - query user', () => {
       name: user.name,
       email: user.email,
       birthDate: user.birthDate.toISOString(),
+    });
+  });
+
+  it('should trigger unknown user error', async () => {
+    const token = await getTestToken();
+    const res = await Request(userQuery, { id: '00000000-0000-0000-0000-000000000000' }, token);
+
+    expect(res.body.data).to.be.null;
+    expect(res.body).to.own.property('errors');
+    expect(res.body.errors).to.deep.include({
+      code: 404,
+      message: 'Usuário inexistente',
     });
   });
 });

@@ -7,6 +7,16 @@ import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
 import { UserType } from './user.type';
 
+const userQuery = `
+query user ($id: String!) {
+  user(id : $id) {
+    id
+    name
+    email
+    birthDate
+  }
+}`;
+
 const createUserMutation = `
 mutation createUser($data: UserInput!) {
   createUser(data: $data) {
@@ -17,7 +27,7 @@ mutation createUser($data: UserInput!) {
   }
 }`;
 
-const getToken = async (): Promise<string> => {
+const getTestToken = async (): Promise<string> => {
   const user = UserEntity.create({
     name: 'Luke Skywalker',
     email: 'skylwalker.top@gmail.com',
@@ -29,7 +39,30 @@ const getToken = async (): Promise<string> => {
   return Authenticator.getJWT({ id: user.id });
 };
 
-describe('GraphQL: User - createUser', () => {
+describe('GraphQL: User - query user', () => {
+  it('should return a user successfully', async () => {
+    const user = UserEntity.create({
+      name: 'Padmé Amidala',
+      email: 'padmeia@yahoo.com',
+      password: 'padead123',
+      birthDate: new Date(),
+    });
+    user.save();
+
+    const token = await getTestToken();
+    const res = await Request(userQuery, { id: user.id }, token);
+
+    expect(res.body).to.not.own.property('errors');
+    expect(res.body.data.user).to.include({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate.toISOString(),
+    });
+  });
+});
+
+describe('GraphQL: User - mutation createUser', () => {
   it('should create user successfully', async () => {
     const input: UserInput = {
       name: 'Padmé Amidala',
@@ -38,7 +71,7 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const token = await getToken();
+    const token = await getTestToken();
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body).to.not.own.property('errors');
@@ -133,7 +166,7 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const token = await getToken();
+    const token = await getTestToken();
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
@@ -149,7 +182,7 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const token = await getToken();
+    const token = await getTestToken();
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
@@ -171,7 +204,7 @@ describe('GraphQL: User - createUser', () => {
       birthDate: new Date(),
     };
 
-    const token = await getToken();
+    const token = await getTestToken();
     const res = await Request(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;

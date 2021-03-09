@@ -24,6 +24,10 @@ export class Authenticator {
     });
   };
 
+  static getPayload = (token: string): Payload => {
+    return jwt.verify(token, String(process.env.JWT_SECRET)) as Payload;
+  };
+
   static context = ({ req }: ServerRequest) => {
     const bearerToken = req.headers?.authorization;
     if (!bearerToken) {
@@ -35,7 +39,7 @@ export class Authenticator {
     const context: ServerContext = {};
 
     try {
-      payload = jwt.verify(token, String(process.env.JWT_SECRET)) as Payload;
+      payload = Authenticator.getPayload(token);
       context.userId = payload.id;
     } catch (err) {
       if (err instanceof TokenExpiredError) {

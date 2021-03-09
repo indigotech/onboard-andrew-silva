@@ -72,6 +72,26 @@ describe('GraphQL: User - query user', () => {
       message: 'Usuário inexistente',
     });
   });
+
+  it('should trigger invalid id error', async () => {
+    const user = UserEntity.create({
+      name: 'Padmé Amidala',
+      email: 'padmeia@yahoo.com',
+      password: 'padead123',
+      birthDate: new Date(),
+    });
+    await user.save();
+
+    const token = await getTestToken();
+    const res = await Request(userQuery, { id: 'wrong id' }, token);
+
+    expect(res.body.data).to.be.null;
+    expect(res.body).to.own.property('errors');
+    expect(res.body.errors).to.deep.include({
+      code: 400,
+      message: 'Identificador de usuário inválido',
+    });
+  });
 });
 
 describe('GraphQL: User - mutation createUser', () => {

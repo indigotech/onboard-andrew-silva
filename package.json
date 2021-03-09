@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon 'src/index.ts' --exec 'ts-node -r tsconfig-paths/register' src/index.ts -e ts,graphql",
-    "test": "TEST=true mocha 'src/test/*.ts' -r ts-node/register -r tsconfig-paths/register --colors --exit",
-    "seeds": "echo \"There is no seed algorithm\"",
+    "test": "TEST=true mocha 'src/test/index.ts' -r ts-node/register -r tsconfig-paths/register --colors --exit",
+    "seeds": "ts-node -r tsconfig-paths/register src/data/seed/index.ts src/data/seed/index.ts",
     "data": "docker-compose up -d",
     "build": "tsc --project tsconfig.json && tscpaths -p tsconfig.json -s ./src -o ./dist",
     "prod": "node 'dist/index.js'"

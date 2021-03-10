@@ -5,6 +5,7 @@ import { PageInput } from '@api/schema/pagination/page.input';
 import { UserInput } from './user.input';
 import { UserType } from './user.type';
 import { UsersType } from './users.type';
+import { PageType } from '../pagination/page.type';
 
 @Resolver()
 export class UserResolver {
@@ -21,26 +22,18 @@ export class UserResolver {
   }
 
   @Query(() => UsersType)
-  async users(@Arg('page', () => PageInput) page: PageInput) {
-    if (!page.offset) {
-      page.offset = 0;
-    }
-
+  async users(@Arg('page', () => PageInput, { nullable: true }) page: PageInput) {
     const count = await UserEntity.count();
+
+    page = PageType.GetPageFromInput(page, count);
+
     const users = await UserEntity.find({
       order: { name: 'ASC' },
       skip: page.offset,
       take: page.limit,
     });
 
-    return {
-      users,
-      count,
-      limit: page.limit,
-      offset: page.offset,
-      hasNextPage: page.offset + users.length < count,
-      hasPreviousPage: page.offset > 0 && count > 0,
-    };
+    return { users, page };
   }
 
   @Mutation(() => UserType)

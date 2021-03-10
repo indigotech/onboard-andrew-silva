@@ -9,6 +9,7 @@ const DatabaseSeed = async () => {
   console.info('Seeding started\n');
 
   await UserSeed();
+  console.info('✓ Users created');
 
   connection.close();
   server.close();

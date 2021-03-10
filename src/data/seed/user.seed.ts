@@ -15,6 +15,4 @@ export const UserSeed = async () => {
     });
     await user.save();
   }
-
-  console.info('✓ Users created');
 };

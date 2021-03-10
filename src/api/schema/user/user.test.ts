@@ -190,9 +190,7 @@ describe('GraphQL: User - query users', function () {
     }
   });
 
-  it('it should trigger non-integer error', async () => {
-    await UserSeed(10);
-
+  it('it should trigger non-positive error', async () => {
     const res = await Request(usersQuery, { limit: -10 });
 
     expect(res.body.data).to.be.null;
@@ -200,6 +198,11 @@ describe('GraphQL: User - query users', function () {
       code: 400,
       message: 'O limite não pode ser negativo',
     });
+  });
+
+  it('it should trigger non-integer error', async () => {
+    const res = await Request(usersQuery, { limit: 4.2 }, undefined, 400);
+    expect(res.body.errors[0].message).to.includes('Int cannot represent non-integer value');
   });
 });
 

@@ -149,10 +149,10 @@ describe('GraphQL: User - query user', () => {
 });
 
 describe('GraphQL: User - query users', function () {
-  this.timeout(15000);
+  this.timeout(5000);
 
   it('should successfully return 10 users without a defined limit', async () => {
-    await UserSeed();
+    await UserSeed(10);
 
     const res = await Request(usersQuery);
 
@@ -164,26 +164,26 @@ describe('GraphQL: User - query users', function () {
     }
   });
 
-  it('should successfully return 20 users with a defined limit', async () => {
-    await UserSeed();
+  it('should successfully return 5 users with a defined limit', async () => {
+    await UserSeed(10);
 
-    const res = await Request(usersQuery, { limit: 20 });
+    const res = await Request(usersQuery, { limit: 5 });
 
     expect(res.body).to.not.own.property('errors');
-    expect(res.body.data.users).to.have.lengthOf(20);
+    expect(res.body.data.users).to.have.lengthOf(5);
 
     for (let i = 0; i < res.body.data.users.length; i++) {
       expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
     }
   });
 
-  it('it should successfully return 50 users with an overly defined limit', async () => {
-    await UserSeed();
+  it('it should successfully return 10 users with an overly defined limit', async () => {
+    await UserSeed(10);
 
-    const res = await Request(usersQuery, { limit: 5000 });
+    const res = await Request(usersQuery, { limit: 100 });
 
     expect(res.body).to.not.own.property('errors');
-    expect(res.body.data.users).to.have.lengthOf(50);
+    expect(res.body.data.users).to.have.lengthOf(10);
 
     for (let i = 0; i < res.body.data.users.length; i++) {
       expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');

@@ -6,7 +6,20 @@ import { BaseError } from '@api/error/base-error';
 
 @Resolver()
 export class UserResolver {
+  @Query(() => UserType)
+  @Authorized()
+  async user(@Arg('id') id: string) {
+    const user: UserEntity | undefined = await UserEntity.findOne(id);
+
+    if (user) {
+      return user;
+    }
+
+    throw new BaseError(404, 'Usuário inexistente');
+  }
+
   @Query(() => [UserType])
+  @Authorized()
   async users() {
     return UserEntity.find();
   }

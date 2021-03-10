@@ -16,5 +16,5 @@ export const UserSeed = async () => {
     await user.save();
   }
 
-  console.log('✓ Users created');
+  console.info('✓ Users created');
 };

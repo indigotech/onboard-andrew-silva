@@ -6,6 +6,7 @@ import { UserSeed } from './user.seed';
 const DatabaseSeed = async () => {
   const connection = await Connection();
   const server = await Server();
+  console.info('Seeding started\n');
 
   await UserSeed();
 

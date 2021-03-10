@@ -9,13 +9,7 @@ export class UserResolver {
   @Query(() => UserType)
   @Authorized()
   async user(@Arg('id') id: string) {
-    let user: UserEntity | undefined;
-
-    try {
-      user = await UserEntity.findOne(id);
-    } catch (err) {
-      throw new BaseError(400, 'Identificador de usuário inválido');
-    }
+    const user: UserEntity | undefined = await UserEntity.findOne(id);
 
     if (user) {
       return user;

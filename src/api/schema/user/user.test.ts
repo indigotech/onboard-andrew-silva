@@ -6,6 +6,7 @@ import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
 import { UserSeed } from '@data/seed/user.seed';
+import { UserType } from './user.type';
 
 const userQuery = `
 query user ($id: String!) {
@@ -159,8 +160,16 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(10);
 
+    const users = res.body.data.users;
+    users.sort((userA: UserType, userB: UserType) => {
+      var nameA = userA.name.toUpperCase();
+      var nameB = userB.name.toUpperCase();
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+    });
+
     for (let i = 0; i < res.body.data.users.length; i++) {
-      expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
+      expect(users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
+      expect(users[i]).to.be.eq(res.body.data.users[i]);
     }
   });
 
@@ -172,8 +181,16 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(5);
 
+    const users = res.body.data.users;
+    users.sort((userA: UserType, userB: UserType) => {
+      var nameA = userA.name.toUpperCase();
+      var nameB = userB.name.toUpperCase();
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+    });
+
     for (let i = 0; i < res.body.data.users.length; i++) {
-      expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
+      expect(users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
+      expect(users[i]).to.be.eq(res.body.data.users[i]);
     }
   });
 
@@ -185,8 +202,16 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(10);
 
+    const users = res.body.data.users;
+    users.sort((userA: UserType, userB: UserType) => {
+      var nameA = userA.name.toUpperCase();
+      var nameB = userB.name.toUpperCase();
+      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+    });
+
     for (let i = 0; i < res.body.data.users.length; i++) {
-      expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
+      expect(users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
+      expect(users[i]).to.be.eq(res.body.data.users[i]);
     }
   });
 

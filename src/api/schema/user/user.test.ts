@@ -168,6 +168,15 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(20);
   });
+
+  it('it should successfully return 50 users with an overly defined limit', async () => {
+    await UserSeed();
+
+    const res = await Request(usersQuery, { limit: 5000 });
+
+    expect(res.body).to.not.own.property('errors');
+    expect(res.body.data.users).to.have.lengthOf(50);
+  });
 });
 
 describe('GraphQL: User - mutation createUser', () => {

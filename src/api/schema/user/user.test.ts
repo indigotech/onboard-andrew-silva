@@ -18,7 +18,7 @@ query user ($id: String!) {
 }`;
 
 const usersQuery = `
-query users ($limit: Float) {
+query users ($limit: Int) {
   users(limit : $limit) {
     id
     name
@@ -188,6 +188,18 @@ describe('GraphQL: User - query users', function () {
     for (let i = 0; i < res.body.data.users.length; i++) {
       expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
     }
+  });
+
+  it('it should trigger non-integer error', async () => {
+    await UserSeed(10);
+
+    const res = await Request(usersQuery, { limit: -10 });
+
+    expect(res.body.data).to.be.null;
+    expect(res.body.errors).to.deep.include({
+      code: 400,
+      message: 'O limite não pode ser negativo',
+    });
   });
 });
 

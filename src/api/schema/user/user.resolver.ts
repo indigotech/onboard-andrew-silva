@@ -19,9 +19,12 @@ export class UserResolver {
   }
 
   @Query(() => [UserType])
-  @Authorized()
-  async users() {
-    return UserEntity.find();
+  async users(@Arg('limit', { defaultValue: 10 }) limit: number = 10) {
+    const users = await UserEntity.find({
+      order: { name: 'ASC' },
+      take: limit,
+    });
+    return users;
   }
 
   @Mutation(() => UserType)

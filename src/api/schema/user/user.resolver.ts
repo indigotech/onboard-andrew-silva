@@ -20,6 +20,10 @@ export class UserResolver {
 
   @Query(() => [UserType])
   async users(@Arg('limit', () => Int, { defaultValue: 10 }) limit: number = 10) {
+    if (limit < 0) {
+      throw new BaseError(400, 'O limite não pode ser negativo');
+    }
+
     const users = await UserEntity.find({
       order: { name: 'ASC' },
       take: limit,

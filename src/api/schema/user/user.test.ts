@@ -5,10 +5,21 @@ import { expect } from 'chai';
 import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
+import { UserSeed } from '@data/seed/user.seed';
 
 const userQuery = `
 query user ($id: String!) {
   user(id : $id) {
+    id
+    name
+    email
+    birthDate
+  }
+}`;
+
+const usersQuery = `
+query users ($limit: Float) {
+  users(limit : $limit) {
     id
     name
     email
@@ -39,7 +50,7 @@ const getTestToken = async (): Promise<string> => {
 };
 
 describe('GraphQL: User - query user', () => {
-  it('should return a user successfully', async () => {
+  it('should successfully return a user', async () => {
     const user = UserEntity.create({
       name: 'Padmé Amidala',
       email: 'padmeia@yahoo.com',
@@ -137,8 +148,21 @@ describe('GraphQL: User - query user', () => {
   });
 });
 
+describe('GraphQL: User - query users', function () {
+  this.timeout(10000);
+
+  it('should successfully return 10 users without a defined limit', async () => {
+    await UserSeed();
+
+    const res = await Request(usersQuery);
+
+    expect(res.body).to.not.own.property('errors');
+    expect(res.body.data.users).to.have.lengthOf(10);
+  });
+});
+
 describe('GraphQL: User - mutation createUser', () => {
-  it('should create user successfully', async () => {
+  it('should successfully create user', async () => {
     const input: UserInput = {
       name: 'Padmé Amidala',
       email: 'padmeia@yahoo.com',

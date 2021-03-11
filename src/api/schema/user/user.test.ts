@@ -1,8 +1,6 @@
-import bcrypt from 'bcrypt';
-import { Request } from '@test/request';
+import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 
-import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
 
@@ -27,7 +25,7 @@ describe('GraphQL: User - query user', () => {
     await user.save();
 
     const token = await Authenticator.getTestToken();
-    const res = await Request(userQuery, { id: user.id }, token);
+    const res = await createRequest(userQuery, { id: user.id }, token);
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.user).to.include({
@@ -40,7 +38,7 @@ describe('GraphQL: User - query user', () => {
 
   it('should trigger unknown user error', async () => {
     const token = await Authenticator.getTestToken();
-    const res = await Request(userQuery, { id: '00000000-0000-0000-0000-000000000000' }, token);
+    const res = await createRequest(userQuery, { id: '00000000-0000-0000-0000-000000000000' }, token);
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({
@@ -58,7 +56,7 @@ describe('GraphQL: User - query user', () => {
     });
     await user.save();
 
-    const res = await Request(userQuery, { id: user.id });
+    const res = await createRequest(userQuery, { id: user.id });
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({
@@ -77,7 +75,7 @@ describe('GraphQL: User - query user', () => {
     });
     await user.save();
 
-    const res = await Request(
+    const res = await createRequest(
       userQuery,
       { id: user.id },
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',
@@ -100,7 +98,7 @@ describe('GraphQL: User - query user', () => {
     });
     await user.save();
 
-    const res = await Request(
+    const res = await createRequest(
       userQuery,
       { id: user.id },
       'eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',

@@ -1,4 +1,4 @@
-import { Request } from '@test/request';
+import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 import { UserSeed } from '@data/seed/user.seed';
 import { UserType } from './user.type';
@@ -19,7 +19,7 @@ describe('GraphQL: User - query users', function () {
   it('should successfully return 10 users without a defined limit', async () => {
     await UserSeed(10);
 
-    const res = await Request(usersQuery);
+    const res = await createRequest(usersQuery);
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(10);
@@ -40,7 +40,7 @@ describe('GraphQL: User - query users', function () {
   it('should successfully return 5 users with a defined limit', async () => {
     await UserSeed(10);
 
-    const res = await Request(usersQuery, { limit: 5 });
+    const res = await createRequest(usersQuery, { limit: 5 });
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(5);
@@ -61,7 +61,7 @@ describe('GraphQL: User - query users', function () {
   it('it should successfully return 10 users with an overly defined limit', async () => {
     await UserSeed(10);
 
-    const res = await Request(usersQuery, { limit: 100 });
+    const res = await createRequest(usersQuery, { limit: 100 });
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(10);
@@ -80,7 +80,7 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('it should trigger non-positive error', async () => {
-    const res = await Request(usersQuery, { limit: -10 });
+    const res = await createRequest(usersQuery, { limit: -10 });
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({
@@ -90,7 +90,7 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('it should trigger non-integer error', async () => {
-    const res = await Request(usersQuery, { limit: 4.2 }, undefined, 400);
+    const res = await createRequest(usersQuery, { limit: 4.2 }, undefined, 400);
     expect(res.body.errors[0].message).to.includes('Int cannot represent non-integer value');
   });
 });

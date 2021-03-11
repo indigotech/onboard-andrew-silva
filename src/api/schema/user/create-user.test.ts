@@ -1,5 +1,5 @@
 import bcrypt from 'bcrypt';
-import { Request } from '@test/request';
+import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 
 import { UserInput } from '@api/schema/user/user.input';
@@ -26,7 +26,7 @@ describe('GraphQL: User - mutation createUser', () => {
     };
 
     const token = await Authenticator.getTestToken();
-    const res = await Request(createUserMutation, { data: input }, token);
+    const res = await createRequest(createUserMutation, { data: input }, token);
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.createUser).to.have.property('id');
@@ -55,7 +55,7 @@ describe('GraphQL: User - mutation createUser', () => {
       birthDate: new Date(),
     };
 
-    const res = await Request(createUserMutation, { data: input });
+    const res = await createRequest(createUserMutation, { data: input });
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({
@@ -73,7 +73,7 @@ describe('GraphQL: User - mutation createUser', () => {
       birthDate: new Date(),
     };
 
-    const res = await Request(
+    const res = await createRequest(
       createUserMutation,
       { data: input },
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',
@@ -95,7 +95,7 @@ describe('GraphQL: User - mutation createUser', () => {
       birthDate: new Date(),
     };
 
-    const res = await Request(
+    const res = await createRequest(
       createUserMutation,
       { data: input },
       'eyJpZCI6ImQ2ODI4MmU4LThlNTEtNGNiZi04MzBlLTg1NGZhNzFkOWJhYiIsImlhdCI6MTYxNTIyMjk4NCwiZXhwIjoxNjE1MjIyOTg2fQ._6-JMIVvkJVVhr8ic3qzTDHSpAAvibL54xWLVW1u-TU',
@@ -118,7 +118,7 @@ describe('GraphQL: User - mutation createUser', () => {
     };
 
     const token = await Authenticator.getTestToken();
-    const res = await Request(createUserMutation, { data: input }, token);
+    const res = await createRequest(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({ code: 400, message: 'Email já cadastrado' });
@@ -133,7 +133,7 @@ describe('GraphQL: User - mutation createUser', () => {
     };
 
     const token = await Authenticator.getTestToken();
-    const res = await Request(createUserMutation, { data: input }, token);
+    const res = await createRequest(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
 
@@ -154,7 +154,7 @@ describe('GraphQL: User - mutation createUser', () => {
     };
 
     const token = await Authenticator.getTestToken();
-    const res = await Request(createUserMutation, { data: input }, token);
+    const res = await createRequest(createUserMutation, { data: input }, token);
 
     expect(res.body.data).to.be.null;
 

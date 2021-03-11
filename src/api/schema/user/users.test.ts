@@ -13,6 +13,16 @@ query users ($limit: Int) {
   }
 }`;
 
+const sortUsersByName = (users: UserType[]): UserType[] => {
+  const sorted = [...users];
+  sorted.sort((userA, userB) => {
+    var nameA = userA.name.toUpperCase();
+    var nameB = userB.name.toUpperCase();
+    return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+  });
+  return sorted;
+};
+
 describe('GraphQL: User - query users', function () {
   this.timeout(5000);
 
@@ -24,16 +34,11 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(10);
 
-    const reorderedUsers = res.body.data.users;
-    reorderedUsers.sort((userA: UserType, userB: UserType) => {
-      var nameA = userA.name.toUpperCase();
-      var nameB = userB.name.toUpperCase();
-      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-    });
+    const sortedUsers = sortUsersByName(res.body.data.users);
 
     for (let i = 0; i < res.body.data.users.length; i++) {
       expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
-      expect(res.body.data.users[i]).to.be.eq(reorderedUsers[i]);
+      expect(res.body.data.users[i]).to.be.eq(sortedUsers[i]);
     }
   });
 
@@ -45,16 +50,11 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(5);
 
-    const reorderedUsers = res.body.data.users;
-    reorderedUsers.sort((userA: UserType, userB: UserType) => {
-      var nameA = userA.name.toUpperCase();
-      var nameB = userB.name.toUpperCase();
-      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-    });
+    const sortedUsers = sortUsersByName(res.body.data.users);
 
     for (let i = 0; i < res.body.data.users.length; i++) {
       expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
-      expect(res.body.data.users[i]).to.be.eq(reorderedUsers[i]);
+      expect(res.body.data.users[i]).to.be.eq(sortedUsers[i]);
     }
   });
 
@@ -66,16 +66,11 @@ describe('GraphQL: User - query users', function () {
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.users).to.have.lengthOf(10);
 
-    const reorderedUsers = res.body.data.users;
-    reorderedUsers.sort((userA: UserType, userB: UserType) => {
-      var nameA = userA.name.toUpperCase();
-      var nameB = userB.name.toUpperCase();
-      return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-    });
+    const sortedUsers = sortUsersByName(res.body.data.users);
 
     for (let i = 0; i < res.body.data.users.length; i++) {
       expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
-      expect(res.body.data.users[i]).to.be.eq(reorderedUsers[i]);
+      expect(res.body.data.users[i]).to.be.eq(sortedUsers[i]);
     }
   });
 

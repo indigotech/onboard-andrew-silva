@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseError } from '@api/error/base-error';
 import { AuthChecker } from 'type-graphql';
+import { UserEntity } from '@data/entity/user.entity';
 import jwt, { TokenExpiredError } from 'jsonwebtoken';
 
 export interface Payload {
@@ -64,5 +65,17 @@ export class Authenticator {
         throw new BaseError(401, 'Usuário não autorizado', 'Token não enviado');
       }
     }
+  };
+
+  static getTestToken = async (): Promise<string> => {
+    const user = UserEntity.create({
+      name: 'Luke Skywalker',
+      email: 'skylwalker.top@gmail.com',
+      password: 'a1ÊÇ7ma2',
+      birthDate: new Date(),
+    });
+    await user.save();
+
+    return Authenticator.getJWT({ id: user.id });
   };
 }

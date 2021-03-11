@@ -14,16 +14,6 @@ query users ($limit: Int) {
   }
 }`;
 
-const sortUsersByName = (users: UserType[]): UserType[] => {
-  const sorted = [...users];
-  sorted.sort((userA, userB) => {
-    var nameA = userA.name.toUpperCase();
-    var nameB = userB.name.toUpperCase();
-    return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
-  });
-  return sorted;
-};
-
 describe('GraphQL: User - query users', function () {
   this.timeout(5000);
 

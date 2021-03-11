@@ -1,4 +1,4 @@
-import { Request } from '@test/request';
+import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 
 import { UserEntity } from '@data/entity/user.entity';
@@ -39,7 +39,7 @@ describe('GraphQL: Login - mutation login', () => {
       rememberMe: false,
     };
 
-    const res = await Request(loginMutation, { data: input });
+    const res = await createRequest(loginMutation, { data: input });
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.login.token).to.be.an('string');
@@ -65,7 +65,7 @@ describe('GraphQL: Login - mutation login', () => {
       rememberMe: true,
     };
 
-    const res = await Request(loginMutation, { data: input });
+    const res = await createRequest(loginMutation, { data: input });
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.login.token).to.be.an('string');
@@ -89,7 +89,7 @@ describe('GraphQL: Login - mutation login', () => {
       rememberMe: false,
     };
 
-    const res = await Request(loginMutation, { data: input });
+    const res = await createRequest(loginMutation, { data: input });
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({ code: 404, message: 'Email não cadastrado' });
@@ -104,7 +104,7 @@ describe('GraphQL: Login - mutation login', () => {
       rememberMe: false,
     };
 
-    const res = await Request(loginMutation, { data: input });
+    const res = await createRequest(loginMutation, { data: input });
 
     expect(res.body.data).to.be.null;
     expect(res.body.errors).to.deep.include({ code: 401, message: 'Email ou senha incorretos' });

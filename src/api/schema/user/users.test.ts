@@ -2,6 +2,7 @@ import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 import { UserSeed } from '@data/seed/user.seed';
 import { UserType } from './user.type';
+import { UserEntity } from '@data/entity/user.entity';
 
 const usersQuery = `
 query users ($limit: Int) {
@@ -32,13 +33,21 @@ describe('GraphQL: User - query users', function () {
     const res = await createRequest(usersQuery);
 
     expect(res.body).to.not.own.property('errors');
-    expect(res.body.data.users).to.have.lengthOf(10);
 
-    const sortedUsers = sortUsersByName(res.body.data.users);
+    const users = await UserEntity.find({
+      order: { name: 'ASC' },
+      take: 10,
+    });
 
-    for (let i = 0; i < res.body.data.users.length; i++) {
-      expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
-      expect(res.body.data.users[i]).to.be.eq(sortedUsers[i]);
+    expect(res.body.data.users.length).to.be.eq(users.length);
+
+    for (let i = 0; i < users.length; i++) {
+      expect(res.body.data.users[i]).to.be.deep.eq({
+        id: users[i].id,
+        name: users[i].name,
+        email: users[i].email,
+        birthDate: users[i].birthDate.toISOString(),
+      });
     }
   });
 
@@ -48,13 +57,21 @@ describe('GraphQL: User - query users', function () {
     const res = await createRequest(usersQuery, { limit: 5 });
 
     expect(res.body).to.not.own.property('errors');
-    expect(res.body.data.users).to.have.lengthOf(5);
 
-    const sortedUsers = sortUsersByName(res.body.data.users);
+    const users = await UserEntity.find({
+      order: { name: 'ASC' },
+      take: 5,
+    });
 
-    for (let i = 0; i < res.body.data.users.length; i++) {
-      expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
-      expect(res.body.data.users[i]).to.be.eq(sortedUsers[i]);
+    expect(res.body.data.users.length).to.be.eq(users.length);
+
+    for (let i = 0; i < users.length; i++) {
+      expect(res.body.data.users[i]).to.be.deep.eq({
+        id: users[i].id,
+        name: users[i].name,
+        email: users[i].email,
+        birthDate: users[i].birthDate.toISOString(),
+      });
     }
   });
 
@@ -64,13 +81,21 @@ describe('GraphQL: User - query users', function () {
     const res = await createRequest(usersQuery, { limit: 100 });
 
     expect(res.body).to.not.own.property('errors');
-    expect(res.body.data.users).to.have.lengthOf(10);
 
-    const sortedUsers = sortUsersByName(res.body.data.users);
+    const users = await UserEntity.find({
+      order: { name: 'ASC' },
+      take: 100,
+    });
 
-    for (let i = 0; i < res.body.data.users.length; i++) {
-      expect(res.body.data.users[i]).to.have.all.keys('id', 'name', 'email', 'birthDate');
-      expect(res.body.data.users[i]).to.be.eq(sortedUsers[i]);
+    expect(res.body.data.users.length).to.be.eq(users.length);
+
+    for (let i = 0; i < users.length; i++) {
+      expect(res.body.data.users[i]).to.be.deep.eq({
+        id: users[i].id,
+        name: users[i].name,
+        email: users[i].email,
+        birthDate: users[i].birthDate.toISOString(),
+      });
     }
   });
 

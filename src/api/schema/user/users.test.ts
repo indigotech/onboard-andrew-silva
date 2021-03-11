@@ -1,7 +1,6 @@
 import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 import { UserSeed } from '@data/seed/user.seed';
-import { UserType } from './user.type';
 import { UserEntity } from '@data/entity/user.entity';
 
 const usersQuery = `
@@ -14,21 +13,26 @@ query users ($limit: Int) {
   }
 }`;
 
+const sortUsersByName = (users: UserEntity[]): UserEntity[] => {
+  const sorted = [...users];
+  sorted.sort((userA, userB) => {
+    var nameA = userA.name.toUpperCase();
+    var nameB = userB.name.toUpperCase();
+    return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+  });
+  return sorted;
+};
+
 describe('GraphQL: User - query users', function () {
   this.timeout(5000);
 
   it('should successfully return 10 users without a defined limit', async () => {
-    await UserSeed(10);
+    let users = await UserSeed(10);
+    users = sortUsersByName(users);
 
     const res = await createRequest(usersQuery);
 
     expect(res.body).to.not.own.property('errors');
-
-    const users = await UserEntity.find({
-      order: { name: 'ASC' },
-      take: 10,
-    });
-
     expect(res.body.data.users.length).to.be.eq(users.length);
 
     for (let i = 0; i < users.length; i++) {
@@ -42,17 +46,13 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('should successfully return 5 users with a defined limit', async () => {
-    await UserSeed(10);
+    let users = await UserSeed(10);
+    users = sortUsersByName(users);
+    users = users.slice(0, 5);
 
     const res = await createRequest(usersQuery, { limit: 5 });
 
     expect(res.body).to.not.own.property('errors');
-
-    const users = await UserEntity.find({
-      order: { name: 'ASC' },
-      take: 5,
-    });
-
     expect(res.body.data.users.length).to.be.eq(users.length);
 
     for (let i = 0; i < users.length; i++) {
@@ -66,17 +66,12 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('it should successfully return 10 users with an overly defined limit', async () => {
-    await UserSeed(10);
+    let users = await UserSeed(10);
+    users = sortUsersByName(users);
 
     const res = await createRequest(usersQuery, { limit: 100 });
 
     expect(res.body).to.not.own.property('errors');
-
-    const users = await UserEntity.find({
-      order: { name: 'ASC' },
-      take: 100,
-    });
-
     expect(res.body.data.users.length).to.be.eq(users.length);
 
     for (let i = 0; i < users.length; i++) {

@@ -24,11 +24,10 @@ export class UserResolver {
       throw new BaseError(400, 'O limite não pode ser negativo');
     }
 
-    const users = await UserEntity.find({
+    return UserEntity.find({
       order: { name: 'ASC' },
       take: limit,
     });
-    return users;
   }
 
   @Mutation(() => UserType)

@@ -5,15 +5,11 @@ import { expect } from 'chai';
 import { UserInput } from '@api/schema/user/user.input';
 import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
+import { UserType } from './user.type';
 
 const createUserMutation = `
 mutation createUser($data: UserInput!) {
-  createUser(data: $data) {
-    id
-    name
-    email
-    birthDate
-  }
+  createUser(data: $data) { ${UserType.propertiestoString()} }
 }`;
 
 describe('GraphQL: User - mutation createUser', () => {

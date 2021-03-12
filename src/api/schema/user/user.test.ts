@@ -3,15 +3,11 @@ import { expect } from 'chai';
 
 import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
+import { UserType } from './user.type';
 
 const userQuery = `
 query user ($id: String!) {
-  user(id : $id) {
-    id
-    name
-    email
-    birthDate
-  }
+  user(id : $id) { ${UserType.propertiestoString()} }
 }`;
 
 describe('GraphQL: User - query user', () => {

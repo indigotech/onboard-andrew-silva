@@ -13,4 +13,8 @@ export class UserType {
 
   @Field(() => Date, { description: 'User birth date' })
   birthDate!: Date;
+
+  static propertiestoString = (): string => {
+    return 'id name email birthDate';
+  };
 }

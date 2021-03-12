@@ -1,8 +1,11 @@
 import { Resolver, Query, Mutation, Arg, Authorized, Int } from 'type-graphql';
+import { BaseError } from '@api/error/base-error';
 import { UserEntity } from '@data/entity/user.entity';
+import { PageInput } from '@api/schema/pagination/page.input';
 import { UserInput } from './user.input';
 import { UserType } from './user.type';
-import { BaseError } from '@api/error/base-error';
+import { UsersType } from './users.type';
+import { PageType } from '../pagination/page.type';
 
 @Resolver()
 export class UserResolver {
@@ -18,16 +21,17 @@ export class UserResolver {
     throw new BaseError(404, 'Usuário inexistente');
   }
 
-  @Query(() => [UserType])
-  async users(@Arg('limit', () => Int, { defaultValue: 10 }) limit: number = 10) {
-    if (limit < 0) {
-      throw new BaseError(400, 'O limite não pode ser negativo');
-    }
+  @Query(() => UsersType)
+  async users(@Arg('page', () => PageInput, { nullable: true }) page: PageInput) {
+    page = PageInput.fixInput(page);
 
-    return UserEntity.find({
+    const [users, count] = await UserEntity.findAndCount({
       order: { name: 'ASC' },
-      take: limit,
+      skip: page.offset,
+      take: page.limit,
     });
+
+    return { users, page: PageType.getPageFromInput(page, count) };
   }
 
   @Mutation(() => UserType)

@@ -1,10 +1,11 @@
+import { AddressEntity } from '@data/entity/address.entity';
 import { UserEntity } from '@data/entity/user.entity';
 import faker from 'faker';
 
 export const UserSeed = async (num: Number = 50): Promise<UserEntity[]> => {
   faker.seed(10);
 
-  await UserEntity.clear();
+  await UserEntity.delete({});
 
   const users = [];
   for (let i = 0; i < num; i++) {
@@ -17,6 +18,19 @@ export const UserSeed = async (num: Number = 50): Promise<UserEntity[]> => {
       }),
     );
     await users[i].save();
+
+    for (let j = 0; j < 2; j++) {
+      const address = AddressEntity.create({
+        user: users[i],
+        cep: faker.address.zipCode(),
+        street: faker.address.streetName(),
+        streetNumber: 4,
+        neighborhood: faker.address.streetSuffix(),
+        city: faker.address.city(),
+        state: faker.address.state(),
+      });
+      await address.save();
+    }
   }
 
   return users;

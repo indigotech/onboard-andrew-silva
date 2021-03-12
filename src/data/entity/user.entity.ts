@@ -6,9 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   BeforeInsert,
+  OneToMany,
+  JoinTable,
+  JoinColumn,
 } from 'typeorm';
 
 import bcrypt from 'bcrypt';
+import { AddressEntity } from './address.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -26,6 +30,10 @@ export class UserEntity extends BaseEntity {
 
   @Column()
   birthDate!: Date;
+
+  @OneToMany(() => AddressEntity, (address) => address.user, { cascade: true })
+  @JoinColumn()
+  addresses?: AddressEntity[];
 
   @Column({ default: true })
   isActive!: boolean;

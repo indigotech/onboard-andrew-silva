@@ -36,9 +36,10 @@ const sortUsersByName = (users: UserEntity[]): UserEntity[] => {
 describe('GraphQL: User - query users', function () {
   this.timeout(5000);
 
-  it('should successfully return 10 users without defining a page', async () => {
-    let seedUsers = await UserSeed(10);
+  it('should return 10 users without defining a page', async () => {
+    let seedUsers = await UserSeed(20);
     seedUsers = sortUsersByName(seedUsers);
+    seedUsers = seedUsers.slice(0, 10);
 
     const res = await createRequest(usersQuery);
 
@@ -49,10 +50,10 @@ describe('GraphQL: User - query users', function () {
 
     expect(users.length).to.be.eq(seedUsers.length);
     expect(page).to.be.deep.eq({
-      count: 10,
+      count: 20,
       offset: 0,
       limit: 10,
-      hasNextPage: false,
+      hasNextPage: true,
       hasPreviousPage: false,
     });
 
@@ -66,8 +67,39 @@ describe('GraphQL: User - query users', function () {
     }
   });
 
-  it('should successfully return 5 users from beginning defining a limit', async () => {
-    let seedUsers = await UserSeed(10);
+  it('should return the last 10 users by defining an offset', async () => {
+    let seedUsers = await UserSeed(20);
+    seedUsers = sortUsersByName(seedUsers);
+    seedUsers = seedUsers.slice(10);
+
+    const res = await createRequest(usersQuery, { page: { offset: 10 } });
+
+    expect(res.body).to.not.own.property('errors');
+
+    const users = res.body.data.users.users;
+    const page = res.body.data.users.page;
+
+    expect(users.length).to.be.eq(seedUsers.length);
+    expect(page).to.be.deep.eq({
+      count: 20,
+      offset: 10,
+      limit: 10,
+      hasNextPage: false,
+      hasPreviousPage: true,
+    });
+
+    for (let i = 0; i < seedUsers.length; i++) {
+      expect(users[i]).to.be.deep.eq({
+        id: seedUsers[i].id,
+        name: seedUsers[i].name,
+        email: seedUsers[i].email,
+        birthDate: seedUsers[i].birthDate.toISOString(),
+      });
+    }
+  });
+
+  it('should return 5 users from beginning by defining a limit', async () => {
+    let seedUsers = await UserSeed(20);
     seedUsers = sortUsersByName(seedUsers);
     seedUsers = seedUsers.slice(0, 5);
 
@@ -80,7 +112,7 @@ describe('GraphQL: User - query users', function () {
 
     expect(users.length).to.be.eq(seedUsers.length);
     expect(page).to.be.deep.eq({
-      count: 10,
+      count: 20,
       offset: 0,
       limit: 5,
       hasNextPage: true,
@@ -128,26 +160,25 @@ describe('GraphQL: User - query users', function () {
     }
   });
 
-  it('it should successfully return all users defining no limit', async () => {
-    let seedUsers = await UserSeed(10);
+  it('should return all users by defining an excessive limit', async () => {
+    let seedUsers = await UserSeed(20);
     seedUsers = sortUsersByName(seedUsers);
 
-    const res = await createRequest(usersQuery, { page: { limit: 0 } });
+    const res = await createRequest(usersQuery, { page: { limit: 50 } });
 
     expect(res.body).to.not.own.property('errors');
 
     const users = res.body.data.users.users;
     const page = res.body.data.users.page;
 
+    expect(users.length).to.be.eq(seedUsers.length);
     expect(page).to.be.deep.eq({
-      count: 10,
+      count: 20,
       offset: 0,
-      limit: 0,
+      limit: 50,
       hasNextPage: false,
       hasPreviousPage: false,
     });
-
-    expect(users.length).to.be.eq(seedUsers.length);
 
     for (let i = 0; i < seedUsers.length; i++) {
       expect(users[i]).to.be.deep.eq({
@@ -159,8 +190,38 @@ describe('GraphQL: User - query users', function () {
     }
   });
 
-  it('it should trigger non-positive error', async () => {
-    const res = await createRequest(usersQuery, { page: { offset: -5, limit: -10 } });
+  it('should return no one user by defining an excessive offset', async () => {
+    await UserSeed(20);
+    const seedUsers: UserEntity[] = [];
+
+    const res = await createRequest(usersQuery, { page: { offset: 5000 } });
+
+    expect(res.body).to.not.own.property('errors');
+
+    const users = res.body.data.users.users;
+    const page = res.body.data.users.page;
+
+    expect(users.length).to.be.eq(seedUsers.length);
+    expect(page).to.be.deep.eq({
+      count: 20,
+      offset: 5000,
+      limit: 10,
+      hasNextPage: false,
+      hasPreviousPage: true,
+    });
+
+    for (let i = 0; i < seedUsers.length; i++) {
+      expect(users[i]).to.be.deep.eq({
+        id: seedUsers[i].id,
+        name: seedUsers[i].name,
+        email: seedUsers[i].email,
+        birthDate: seedUsers[i].birthDate.toISOString(),
+      });
+    }
+  });
+
+  it('it should trigger min offset validation error', async () => {
+    const res = await createRequest(usersQuery, { page: { offset: -5 } });
 
     expect(res.body.data).to.be.null;
 
@@ -169,10 +230,33 @@ describe('GraphQL: User - query users', function () {
     const errorIndex = errorMessages.indexOf('Argumentos inválidos');
 
     expect(res.body.errors[errorIndex]).to.own.property('details');
-    expect(res.body.errors[errorIndex].details).to.include(
-      'O número de elementos ignorados precisa ser igual ou maior que zero',
-    );
-    expect(res.body.errors[errorIndex].details).to.include('O número limite precisa ser igual ou maior que zero');
+    expect(res.body.errors[errorIndex].details).to.include('O número mínimo de elementos ignorados é 0');
+  });
+
+  it('it should trigger min limit validation error', async () => {
+    const res = await createRequest(usersQuery, { page: { limit: 0 } });
+
+    expect(res.body.data).to.be.null;
+
+    const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
+    expect(errorMessages).to.include('Argumentos inválidos');
+    const errorIndex = errorMessages.indexOf('Argumentos inválidos');
+
+    expect(res.body.errors[errorIndex]).to.own.property('details');
+    expect(res.body.errors[errorIndex].details).to.include('O número limite mínimo é 1');
+  });
+
+  it('it should trigger max limit validation error', async () => {
+    const res = await createRequest(usersQuery, { page: { limit: 101 } });
+
+    expect(res.body.data).to.be.null;
+
+    const errorMessages = res.body.errors.map((error: { message: string }) => error.message);
+    expect(errorMessages).to.include('Argumentos inválidos');
+    const errorIndex = errorMessages.indexOf('Argumentos inválidos');
+
+    expect(res.body.errors[errorIndex]).to.own.property('details');
+    expect(res.body.errors[errorIndex].details).to.include('O número limite máximo é 100');
   });
 
   it('it should trigger non-integer error', async () => {

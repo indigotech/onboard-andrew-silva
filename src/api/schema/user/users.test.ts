@@ -200,15 +200,6 @@ describe('GraphQL: User - query users', function () {
       hasNextPage: false,
       hasPreviousPage: true,
     });
-
-    for (let i = 0; i < seedUsers.length; i++) {
-      expect(users[i]).to.be.deep.eq({
-        id: seedUsers[i].id,
-        name: seedUsers[i].name,
-        email: seedUsers[i].email,
-        birthDate: seedUsers[i].birthDate.toISOString(),
-      });
-    }
   });
 
   it('should trigger min offset validation error', async () => {

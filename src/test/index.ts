@@ -1,6 +1,7 @@
 import { Connection } from '@data/config/connection';
 import { Server } from '@api/server/server';
 
+import { AddressEntity } from '@data/entity/address.entity';
 import { UserEntity } from '@data/entity/user.entity';
 
 import * as glob from 'glob';
@@ -17,5 +18,6 @@ before(async () => {
   .forEach((file) => require(file));
 
 afterEach(async () => {
+  await AddressEntity.delete({});
   await UserEntity.delete({});
 });

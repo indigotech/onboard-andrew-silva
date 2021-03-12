@@ -19,13 +19,8 @@ export class PageType {
   @Field({ description: 'Indicate if there is a previous page' })
   hasPreviousPage!: boolean;
 
-  static GetPageFromInput = (page: PageInput | undefined, count: number): PageType => {
-    if (!page) {
-      page = new PageInput();
-    }
-
+  static getPageFromInput = (page: PageInput, count: number): PageType => {
     page.offset = page.offset != undefined ? page.offset : 0;
-    page.limit = page.limit != undefined ? page.limit : 10;
 
     return {
       count: count,

@@ -23,17 +23,15 @@ export class UserResolver {
 
   @Query(() => UsersType)
   async users(@Arg('page', () => PageInput, { nullable: true }) page: PageInput) {
-    const count = await UserEntity.count();
+    page = PageInput.fixInput(page);
 
-    page = PageType.GetPageFromInput(page, count);
-
-    const users = await UserEntity.find({
+    const [users, count] = await UserEntity.findAndCount({
       order: { name: 'ASC' },
       skip: page.offset,
       take: page.limit,
     });
 
-    return { users, page };
+    return { users, page: PageType.getPageFromInput(page, count) };
   }
 
   @Mutation(() => UserType)

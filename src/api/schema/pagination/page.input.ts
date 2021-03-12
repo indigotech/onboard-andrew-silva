@@ -11,4 +11,15 @@ export class PageInput {
   @Min(1, { message: 'O número limite mínimo é 1' })
   @Max(100, { message: 'O número limite máximo é 100' })
   limit!: number;
+
+  static fixInput = (page: PageInput | undefined): PageInput => {
+    if (!page) {
+      page = new PageInput();
+    }
+
+    page.offset = page.offset != undefined ? page.offset : 0;
+    page.limit = page.limit != undefined ? page.limit : 10;
+
+    return page;
+  };
 }

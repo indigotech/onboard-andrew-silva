@@ -17,5 +17,5 @@ before(async () => {
   .forEach((file) => require(file));
 
 afterEach(async () => {
-  await UserEntity.clear();
+  await UserEntity.delete({});
 });

@@ -2,23 +2,14 @@ import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 import { UserSeed } from '@data/seed/user.seed';
 import { UserEntity } from '@data/entity/user.entity';
+import { UserType } from './user.type';
+import { PageType } from '../pagination/page.type';
 
 const usersQuery = `
 query users($page: PageInput) {
   users(page: $page) {
-    page {
-      count
-      offset
-      limit
-      hasNextPage
-      hasPreviousPage
-    }
-    users {
-      id
-      name
-      email
-      birthDate
-    }
+    page { ${PageType.propertiestoString()} }
+    users { ${UserType.propertiestoString()} }
   }
 }
 `;

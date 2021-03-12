@@ -211,7 +211,7 @@ describe('GraphQL: User - query users', function () {
     }
   });
 
-  it('it should trigger min offset validation error', async () => {
+  it('should trigger min offset validation error', async () => {
     const res = await createRequest(usersQuery, { page: { offset: -5 } });
 
     expect(res.body.data).to.be.null;
@@ -224,7 +224,7 @@ describe('GraphQL: User - query users', function () {
     expect(res.body.errors[errorIndex].details).to.include('O número mínimo de elementos ignorados é 0');
   });
 
-  it('it should trigger min limit validation error', async () => {
+  it('should trigger min limit validation error', async () => {
     const res = await createRequest(usersQuery, { page: { limit: 0 } });
 
     expect(res.body.data).to.be.null;
@@ -237,7 +237,7 @@ describe('GraphQL: User - query users', function () {
     expect(res.body.errors[errorIndex].details).to.include('O número limite mínimo é 1');
   });
 
-  it('it should trigger max limit validation error', async () => {
+  it('should trigger max limit validation error', async () => {
     const res = await createRequest(usersQuery, { page: { limit: 101 } });
 
     expect(res.body.data).to.be.null;
@@ -250,7 +250,7 @@ describe('GraphQL: User - query users', function () {
     expect(res.body.errors[errorIndex].details).to.include('O número limite máximo é 100');
   });
 
-  it('it should trigger non-integer error', async () => {
+  it('should trigger non-integer error', async () => {
     const res = await createRequest(usersQuery, { page: { offset: 4.2 } }, undefined, 400);
     expect(res.body.errors[0].message).to.includes('Int cannot represent non-integer value');
   });

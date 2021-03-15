@@ -1,9 +1,9 @@
 import { createRequest } from '@test/create-request';
 import { expect } from 'chai';
 
-import { UserEntity } from '@data/entity/user.entity';
 import { Authenticator } from '@api/server/authenticator';
 import { UserType } from './user.type';
+import { UserSeed } from '@data/seed/user.seed';
 
 const userQuery = `
 query user ($id: String!) {
@@ -11,14 +11,24 @@ query user ($id: String!) {
 }`;
 
 describe('GraphQL: User - query user', () => {
-  it('should successfully return a user', async () => {
-    const user = UserEntity.create({
-      name: 'Padmé Amidala',
-      email: 'padmeia@yahoo.com',
-      password: 'padead123',
-      birthDate: new Date(),
+  it('should return a user without addresses', async () => {
+    let [user] = await UserSeed(1, 0);
+
+    const token = await Authenticator.getTestToken();
+    const res = await createRequest(userQuery, { id: user.id }, token);
+
+    expect(res.body).to.not.own.property('errors');
+    expect(res.body.data.user.addresses).to.have.lengthOf(0);
+    expect(res.body.data.user).to.include({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      birthDate: user.birthDate.toISOString(),
     });
-    await user.save();
+  });
+
+  it('should return a user with 3 addresses', async () => {
+    let [user] = await UserSeed(1, 3);
 
     const token = await Authenticator.getTestToken();
     const res = await createRequest(userQuery, { id: user.id }, token);
@@ -30,6 +40,22 @@ describe('GraphQL: User - query user', () => {
       email: user.email,
       birthDate: user.birthDate.toISOString(),
     });
+
+    const addresses = res.body.data.user.addresses;
+    expect(addresses).to.have.lengthOf(3);
+    for (let i = 0; i < addresses.length; i++) {
+      expect(addresses[i]).to.be.deep.eq({
+        id: user.addresses[i].id,
+        label: user.addresses[i].label,
+        cep: user.addresses[i].cep,
+        street: user.addresses[i].street,
+        streetNumber: user.addresses[i].streetNumber,
+        complement: user.addresses[i].complement,
+        neighborhood: user.addresses[i].neighborhood,
+        city: user.addresses[i].city,
+        state: user.addresses[i].state,
+      });
+    }
   });
 
   it('should trigger unknown user error', async () => {
@@ -44,13 +70,7 @@ describe('GraphQL: User - query user', () => {
   });
 
   it('should trigger token not sent error', async () => {
-    const user = UserEntity.create({
-      name: 'Padmé Amidala',
-      email: 'padmeia@yahoo.com',
-      password: 'padead123',
-      birthDate: new Date(),
-    });
-    await user.save();
+    let [user] = await UserSeed(1, 0);
 
     const res = await createRequest(userQuery, { id: user.id });
 
@@ -63,13 +83,7 @@ describe('GraphQL: User - query user', () => {
   });
 
   it('should trigger expired token error', async () => {
-    const user = UserEntity.create({
-      name: 'Padmé Amidala',
-      email: 'padmeia@yahoo.com',
-      password: 'padead123',
-      birthDate: new Date(),
-    });
-    await user.save();
+    let [user] = await UserSeed(1, 0);
 
     const res = await createRequest(
       userQuery,
@@ -86,13 +100,7 @@ describe('GraphQL: User - query user', () => {
   });
 
   it('should trigger invalid token error', async () => {
-    const user = UserEntity.create({
-      name: 'Padmé Amidala',
-      email: 'padmeia@yahoo.com',
-      password: 'padead123',
-      birthDate: new Date(),
-    });
-    await user.save();
+    let [user] = await UserSeed(1, 0);
 
     const res = await createRequest(
       userQuery,

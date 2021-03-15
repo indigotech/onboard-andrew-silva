@@ -40,6 +40,7 @@ export class UserResolver {
   async createUser(@Arg('data', () => UserInput) data: UserInput) {
     try {
       const user = UserEntity.create(data);
+      user.addresses = [];
       await user.save();
 
       return user;

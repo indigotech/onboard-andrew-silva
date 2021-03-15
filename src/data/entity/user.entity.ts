@@ -33,7 +33,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => AddressEntity, (address) => address.user, { cascade: true })
   @JoinColumn()
-  addresses?: AddressEntity[];
+  addresses!: AddressEntity[];
 
   @Column({ default: true })
   isActive!: boolean;

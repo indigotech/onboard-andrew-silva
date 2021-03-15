@@ -18,7 +18,7 @@ export class AddressEntity extends BaseEntity {
   @Column()
   street!: string;
 
-  @Column()
+  @Column({ type: 'int' })
   streetNumber!: number;
 
   @Column({ nullable: true })

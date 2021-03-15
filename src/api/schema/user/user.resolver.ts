@@ -12,7 +12,7 @@ export class UserResolver {
   @Query(() => UserType)
   @Authorized()
   async user(@Arg('id', () => String) id: string) {
-    const user: UserEntity | undefined = await UserEntity.findOne(id);
+    const user: UserEntity | undefined = await UserEntity.findOne(id, { relations: ['addresses'] });
 
     if (user) {
       return user;
@@ -29,6 +29,7 @@ export class UserResolver {
       order: { name: 'ASC' },
       skip: page.offset,
       take: page.limit,
+      relations: ['addresses'],
     });
 
     return { users, page: PageType.getPageFromInput(page, count) };

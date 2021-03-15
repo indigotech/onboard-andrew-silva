@@ -17,20 +17,23 @@ export const UserSeed = async (numUsers: Number = 50, numAddresses: Number = 1):
         birthDate: faker.date.past(80),
       }),
     );
-    await users[i].save();
 
+    users[i].addresses = [];
     for (let j = 0; j < numAddresses; j++) {
-      const address = AddressEntity.create({
-        user: users[i],
-        cep: faker.address.zipCode(),
-        street: faker.address.streetName(),
-        streetNumber: 4,
-        neighborhood: faker.address.streetSuffix(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-      });
-      await address.save();
+      users[i].addresses.push(
+        AddressEntity.create({
+          cep: faker.address.zipCode(),
+          street: faker.address.streetName(),
+          streetNumber: 4,
+          neighborhood: faker.address.streetSuffix(),
+          city: faker.address.city(),
+          state: faker.address.state(),
+        }),
+      );
+      await users[i].addresses[j].save();
     }
+
+    await users[i].save();
   }
 
   return users;

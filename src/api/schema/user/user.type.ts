@@ -1,4 +1,5 @@
 import { ObjectType, Field, ID } from 'type-graphql';
+import { AddressType } from '../address/address.type';
 
 @ObjectType()
 export class UserType {
@@ -14,7 +15,10 @@ export class UserType {
   @Field(() => Date, { description: 'User birth date' })
   birthDate!: Date;
 
+  @Field(() => [AddressType], { description: 'User addresses' })
+  addresses!: AddressType[];
+
   static propertiestoString = (): string => {
-    return 'id name email birthDate';
+    return `id name email birthDate addresses { ${AddressType.propertiestoString()} }`;
   };
 }

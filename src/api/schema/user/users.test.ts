@@ -28,7 +28,7 @@ describe('GraphQL: User - query users', function () {
   this.timeout(5000);
 
   it('should return 10 users without defining a page', async () => {
-    let seedUsers = await UserSeed(20);
+    let seedUsers = await UserSeed(20, 2);
     seedUsers = sortUsersByName(seedUsers);
     seedUsers = seedUsers.slice(0, 10);
 
@@ -49,7 +49,8 @@ describe('GraphQL: User - query users', function () {
     });
 
     for (let i = 0; i < seedUsers.length; i++) {
-      expect(users[i]).to.be.deep.eq({
+      expect(users[i].addresses).to.have.lengthOf(2);
+      expect(users[i]).to.include({
         id: seedUsers[i].id,
         name: seedUsers[i].name,
         email: seedUsers[i].email,
@@ -59,7 +60,7 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('should return the last 10 users by defining an offset', async () => {
-    let seedUsers = await UserSeed(20);
+    let seedUsers = await UserSeed(20, 0);
     seedUsers = sortUsersByName(seedUsers);
     seedUsers = seedUsers.slice(10);
 
@@ -80,7 +81,8 @@ describe('GraphQL: User - query users', function () {
     });
 
     for (let i = 0; i < seedUsers.length; i++) {
-      expect(users[i]).to.be.deep.eq({
+      expect(users[i].addresses).to.have.lengthOf(0);
+      expect(users[i]).to.include({
         id: seedUsers[i].id,
         name: seedUsers[i].name,
         email: seedUsers[i].email,
@@ -90,7 +92,7 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('should return 5 users from beginning by defining a limit', async () => {
-    let seedUsers = await UserSeed(20);
+    let seedUsers = await UserSeed(20, 2);
     seedUsers = sortUsersByName(seedUsers);
     seedUsers = seedUsers.slice(0, 5);
 
@@ -111,7 +113,8 @@ describe('GraphQL: User - query users', function () {
     });
 
     for (let i = 0; i < seedUsers.length; i++) {
-      expect(users[i]).to.be.deep.eq({
+      expect(users[i].addresses).to.have.lengthOf(2);
+      expect(users[i]).to.include({
         id: seedUsers[i].id,
         name: seedUsers[i].name,
         email: seedUsers[i].email,
@@ -121,7 +124,7 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('should successfully return 8 users defining an offset and a limit', async () => {
-    let seedUsers = await UserSeed(10);
+    let seedUsers = await UserSeed(10, 0);
     seedUsers = sortUsersByName(seedUsers);
     seedUsers = seedUsers.slice(2, 7);
 
@@ -142,7 +145,8 @@ describe('GraphQL: User - query users', function () {
     });
 
     for (let i = 0; i < seedUsers.length; i++) {
-      expect(users[i]).to.be.deep.eq({
+      expect(users[i].addresses).to.have.lengthOf(0);
+      expect(users[i]).to.include({
         id: seedUsers[i].id,
         name: seedUsers[i].name,
         email: seedUsers[i].email,
@@ -152,7 +156,7 @@ describe('GraphQL: User - query users', function () {
   });
 
   it('should return all users by defining an excessive limit', async () => {
-    let seedUsers = await UserSeed(20);
+    let seedUsers = await UserSeed(20, 2);
     seedUsers = sortUsersByName(seedUsers);
 
     const res = await createRequest(usersQuery, { page: { limit: 50 } });
@@ -172,7 +176,8 @@ describe('GraphQL: User - query users', function () {
     });
 
     for (let i = 0; i < seedUsers.length; i++) {
-      expect(users[i]).to.be.deep.eq({
+      expect(users[i].addresses).to.have.lengthOf(2);
+      expect(users[i]).to.deep.include({
         id: seedUsers[i].id,
         name: seedUsers[i].name,
         email: seedUsers[i].email,

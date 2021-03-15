@@ -26,6 +26,7 @@ describe('GraphQL: User - mutation createUser', () => {
 
     expect(res.body).to.not.own.property('errors');
     expect(res.body.data.createUser).to.have.property('id');
+    expect(res.body.data.createUser.addresses).to.have.lengthOf(0);
     expect(res.body.data.createUser).to.include({
       name: input.name,
       email: input.email,
